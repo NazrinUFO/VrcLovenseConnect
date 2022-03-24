@@ -35,6 +35,7 @@ int retries = 0;
 var configFile = File.ReadAllText("config.json");
 var config = JsonConvert.DeserializeObject<Config>(configFile);
 
+// Checks the config's parameters
 if (config == null)
 {
     Console.WriteLine("Error in configuration file. Please check the format.");
@@ -142,7 +143,7 @@ var task = Task.Run(async () =>
                     retries++;
 
                     // No message received for a moment, pauses vibration if started.
-                    if (retries > 10 && intensity != 0 && toy != null)
+                    if (retries > config.Limit && intensity != 0 && toy != null)
                     {
                         intensity = 0;
                         await VibrateToy(intensity);
@@ -173,6 +174,7 @@ async Task VibrateToy(int intensity)
 {
     try
     {
+        // Finds the first toy connected.
         if (toy == null)
         {
             var toys = await LovenseConnect.GetToys(config.Address);
@@ -187,6 +189,7 @@ async Task VibrateToy(int intensity)
             }
         }
 
+        // Vibrates the toy with the set intensity.
         if (!await LovenseConnect.VibrateToy(config.Address, toy?.ToyID ?? string.Empty, intensity))
         {
             Console.ForegroundColor = ConsoleColor.Red;
