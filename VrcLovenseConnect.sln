@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VrcLovenseConnect", "VrcLovenseConnect\VrcLovenseConnect.csproj", "{1E554F6C-397B-40F9-B0BF-1412E2165550}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E554F6C-397B-40F9-B0BF-1412E2165550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E554F6C-397B-40F9-B0BF-1412E2165550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E554F6C-397B-40F9-B0BF-1412E2165550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E554F6C-397B-40F9-B0BF-1412E2165550}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {17177EA6-9D8D-49C3-B309-9877A28E307D}
+	EndGlobalSection
+EndGlobal
