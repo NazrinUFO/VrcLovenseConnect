@@ -75,7 +75,7 @@ if (string.IsNullOrWhiteSpace(config.Parameter))
 using var receiver = new OscReceiver(IPAddress.Loopback, config.OscPort);
 
 Console.ForegroundColor = ConsoleColor.Cyan;
-Console.WriteLine("VRCLovenseConnect v0.1");
+Console.WriteLine("VRCLovenseConnect Alpha");
 Console.ForegroundColor = defaultColor;
 
 // Listens for OSC messages on localhost, port 9001.
