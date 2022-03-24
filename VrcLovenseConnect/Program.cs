@@ -111,8 +111,9 @@ var task = Task.Run(async () =>
                     // Looks into the message every N-calls
                     if (nbrMessages == 0)
                     {
+#if DEBUG
                         Console.WriteLine(message?.ToString());
-
+#endif
                         haptics = message?.FirstOrDefault() as float?;
 
                         if (haptics.HasValue)
@@ -147,7 +148,9 @@ var task = Task.Run(async () =>
                     {
                         intensity = 0;
                         await VibrateToy(intensity);
+#if DEBUG
                         Console.WriteLine("Vibration stopped.");
+#endif
                     }
                 }
             }
