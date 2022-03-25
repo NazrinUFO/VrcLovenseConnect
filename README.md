@@ -14,15 +14,17 @@ Lovense Connect for Android or iOS (also works on PC but requires the Lovense Bl
 ## Quick Start
 There are two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
 
+# Buttplug.io Compatible Toys (NEW!)
+Simply connect your toy to your PC through a cable or Bluetooth. Lovense toys should work with basic features in this protocol too.
+
+You can test the connectivity of your toys with Intiface Desktop.
+
 # Lovense Connect
 Open the Lovense Connect app on your phone or PC, then select the green shield icon to reveal a URL.
 
 In the config.json file next to the executable, copy this URL to the "address" field.
 
 Then simply launch the program after VRChat is open.
-
-# Buttplug.io Compatible Toys (NEW!)
-Simply connect your toy to your PC through a cable or Bluetooth. Lovense toys should work with basic features in this protocol too.
 
 ## Avatar Setup
 Your avatar requires a spherical Contact Receiver with "Proximity" mode. Set it up with any Contact Sender, whether it's a standard (hands, head...) or a custom one (sharing an unique name between your friends is a good idea).
@@ -50,10 +52,12 @@ I will implement more Lovense features in the future than just vibrations, with 
 ~~I'm also looking into implementing Buttplug.io to support more toys (I found a wrapper already!).~~ It's done.
 
 ## Documentation
-https://docs.vrchat.com/docs/osc-overview
+VRChat OSC: https://docs.vrchat.com/docs/osc-overview
 
-https://docs.vrchat.com/v2022.1.2/docs/contacts
+VRChat Contacts: https://docs.vrchat.com/v2022.1.2/docs/contacts
 
-https://github.com/buttplugio/buttplug-rs-ffi/tree/master/csharp
+Intiface Desktop: https://intiface.com/desktop/
 
-https://github.com/MistressPlague/LovenseConnectCSharp
+Buttplug.io C#: https://github.com/buttplugio/buttplug-rs-ffi/tree/master/csharp
+
+LovenseConnectCSharp: https://github.com/MistressPlague/LovenseConnectCSharp
