@@ -1,24 +1,12 @@
-﻿using LovenseConnectAPI;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Rug.Osc;
 using System.Net;
 using VrcLovenseConnect;
-using static LovenseConnectAPI.LovenseConnect;
 
 /// <summary>
 /// The default text color in console.
 /// </summary>
-var defaultColor = Console.ForegroundColor;
-
-/// <summary>
-/// The vibration intensity.
-/// </summary>
-int intensity = 0;
-
-/// <summary>
-/// The connected toy.
-/// </summary>
-LovenseToy? toy = null;
+ConsoleColor defaultColor = Console.ForegroundColor;
 
 /// <summary>
 /// Indicates whether the program keeps running.
@@ -26,68 +14,153 @@ LovenseToy? toy = null;
 bool play = true;
 
 /// <summary>
+/// The intensity read from an OSC message.
+/// </summary>
+float? haptics = null;
+
+/// <summary>
 /// Number of messages read.
 /// </summary>
 int nbrMessages = 0;
 
+/// <summary>
+/// Number of counted retries.
+/// </summary>
 int retries = 0;
 
-var configFile = File.ReadAllText("config.json");
-var config = JsonConvert.DeserializeObject<Config>(configFile);
+// == PROGRAM ==
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("VRCLovenseConnect (alpha)");
+Console.ForegroundColor = defaultColor;
 
-// Checks the config's parameters
+// Checks the configuration of the program
+string configFile = File.ReadAllText("config.json");
+Config? config = JsonConvert.DeserializeObject<Config>(configFile);
+
 if (config == null)
 {
-    Console.WriteLine("Error in configuration file. Please check the format.");
-    Console.ReadKey(true);
+    Console.WriteLine("Error in configuration file. Please check its format.");
+    AwaitUserKeyPress();
     return;
 }
 
 if (config.OscPort <= 0)
 {
     Console.WriteLine("Port error in configuration file. Pleaser enter a valid port number.");
-    Console.ReadKey(true);
+    AwaitUserKeyPress();
     return;
 }
 
-if (string.IsNullOrWhiteSpace(config.Address))
+if (config.Protocol == "Lovense" && string.IsNullOrWhiteSpace(config.Address))
 {
     Console.WriteLine("Address error in configuration file. Please enter the address provided by the Lovense Connect app on your phone.");
-    Console.ReadKey(true);
+    AwaitUserKeyPress();
+    return;
+}
+
+if (config.Protocol == "Buttplug" && config.ScanTime <= 0)
+{
+    Console.WriteLine("Scan time error in configuration file. Pleaser enter a non-zero, positive value.");
+    AwaitUserKeyPress();
     return;
 }
 
 if (config.Limit <= 0)
 {
     Console.WriteLine("Limit error in configuration file. Pleaser enter a non-zero, positive value.");
-    Console.ReadKey(true);
+    AwaitUserKeyPress();
     return;
 }
 
 if (string.IsNullOrWhiteSpace(config.Parameter))
 {
     Console.WriteLine("Avatar Parameter error in configuration file. Please enter a valid parameter name.");
-    Console.ReadKey(true);
+    AwaitUserKeyPress();
     return;
 }
 
-// Initiates the OSC receiver on localhost:9001.
-using var receiver = new OscReceiver(IPAddress.Loopback, config.OscPort);
+// Connection to toy
+IToyManager toyManager;
 
-Console.ForegroundColor = ConsoleColor.Cyan;
-Console.WriteLine("VRCLovenseConnect Alpha");
-Console.ForegroundColor = defaultColor;
+switch (config.Protocol)
+{
+    case "Lovense":
+        toyManager = new LovenseManager(config.Address);
+        break;
 
-// Listens for OSC messages on localhost, port 9001.
-receiver.Connect();
-Console.WriteLine($"Connected and listening to {receiver.LocalAddress}:{receiver.RemoteEndPoint.Port}...");
+    case "Buttplug":
+        toyManager = new ButtplugManager(config.ScanTime);
+        break;
 
-// Once connected, starts a seperate thread to leave the console available for inputs.
-var task = Task.Run(async () =>
+    default:
+        Console.WriteLine("Protocol error in configuration file. Please enter a valid protocol name.");
+        AwaitUserKeyPress();
+        return;
+}
+
+using (toyManager)
+{
+    Console.WriteLine("Looking for a toy...");
+    await toyManager.FindToy();
+
+    if (toyManager.IsToyFound)
+    {
+        Console.WriteLine($"Toy found: {toyManager.ToyName}");
+    }
+    else
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        
+        if (config.Protocol == "Lovense")
+            Console.WriteLine("WARNING: Cannot find a toy! Please check the address in the config.json file and make sure your toy is connected to Lovense Connect.");
+        else
+            Console.WriteLine("WARNING: Cannot find a toy! Please make sure your toy is connected to your computer or within the same network.");
+
+        Console.ForegroundColor = defaultColor;
+        AwaitUserKeyPress();
+        return;
+    }
+
+    // Once connected, starts a seperate thread to read OSC messages and leave the console available for inputs.
+    var task = Task.Run(Listen);
+
+    // Any key press will close the program.
+    AwaitUserKeyPress();
+
+    // Stops the program and waits for the loop to complete.
+    play = false;
+    task.Wait();
+
+    // Stops vibration if started.
+    if (haptics.HasValue && haptics.Value > 0)
+    {
+        toyManager.Vibrate(0).Wait();
+    }
+}
+
+// == END PROGRAM ==
+
+/// <summary>
+/// Common process to wait for a user's input before closing the program.
+/// </summary>
+void AwaitUserKeyPress()
+{
+    Console.WriteLine("Press any key to close the program.");
+    Console.ReadKey(true);
+}
+
+/// <summary>
+/// Listens to OSC messages and updates toys.
+/// </summary>
+async void Listen()
 {
     OscMessage? message;
-    float? haptics;
     bool messageReceived;
+
+    // Listens for OSC messages on localhost, port 9001.
+    using var oscReceiver = new OscReceiver(IPAddress.Loopback, config.OscPort);
+    oscReceiver.Connect();
+    Console.WriteLine($"Connected and listening to {oscReceiver.LocalAddress}:{oscReceiver.RemoteEndPoint.Port}...");
 
     // Loops until the program is closed.
     while (play)
@@ -95,7 +168,7 @@ var task = Task.Run(async () =>
         try
         {
             // Listens for one tick. Non-blocking.
-            messageReceived = receiver.TryReceive(out OscPacket packet);
+            messageReceived = oscReceiver.TryReceive(out OscPacket packet);
 
             // Message received, sends intensity to the toy's vibration.
             if (messageReceived)
@@ -117,12 +190,8 @@ var task = Task.Run(async () =>
 
                         if (haptics.HasValue)
                         {
-                            // Scales the received value to Lovense's Vibration scale (0-20).
-                            // Source: https://fr.lovense.com/sextoys/developer/doc#solution-3-cam-kit-step3
-                            intensity = (int)Math.Ceiling(haptics.Value * 20.0f);
-
                             // Updates the toy to the vibration value.
-                            await VibrateToy(intensity);
+                            await toyManager.Vibrate(haptics.Value);
                         }
 
                         // Next call.
@@ -143,10 +212,10 @@ var task = Task.Run(async () =>
                     retries++;
 
                     // No message received for a moment, pauses vibration if started.
-                    if (retries > config.Limit && intensity != 0 && toy != null)
+                    if (retries > config.Limit && haptics.HasValue && haptics.Value > 0)
                     {
-                        intensity = 0;
-                        await VibrateToy(intensity);
+                        haptics = 0;
+                        await toyManager.Vibrate(haptics.Value);
 #if DEBUG
                         Console.WriteLine("Vibration stopped.");
 #endif
@@ -158,52 +227,5 @@ var task = Task.Run(async () =>
         {
             Console.WriteLine(ex.ToString());
         }
-    }
-});
-
-// Any key press will close the program.
-Console.ReadKey(true);
-
-// Stops the program and waits for the loop to complete.
-play = false;
-task.Wait();
-
-// Stops vibration if started.
-if (intensity != 0 && toy != null)
-    VibrateToy(0).Wait();
-
-async Task VibrateToy(int intensity)
-{
-    try
-    {
-        // Finds the first toy connected.
-        if (toy == null)
-        {
-            var toys = await LovenseConnect.GetToys(config.Address);
-            toy = toys?.FirstOrDefault();
-
-            if (toy == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("WARNING: Cannot find a toy! Please check that the address in the config.json file is the one provided by the Lovense Connect app on your phone.");
-                Console.ForegroundColor = defaultColor;
-                return;
-            }
-        }
-
-        // Vibrates the toy with the set intensity.
-        if (!await LovenseConnect.VibrateToy(config.Address, toy?.Id ?? string.Empty, intensity))
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("WARNING: Lovense update failed! Please check that the address in the config.json file is the one provided by the Lovense Connect app on your phone.");
-            Console.ForegroundColor = defaultColor;
-        }
-
-    }
-    catch (Exception ex)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(ex.Message);
-        Console.ForegroundColor = defaultColor;
     }
 }

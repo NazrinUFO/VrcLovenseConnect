@@ -2,10 +2,16 @@
   // The port to listen OSC messages on. Default is 9001.
   "oscPort": 9001,
 
-  // The address provided by the Lovense Connect app on your phone (not Lovense Remote).
+  // The protocol to use for toy controls (Lovense or Buttplug).
+  "protocol": "Buttplug",
+
+  // Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
   "address": "https://192-168-1-57.lovense.club:30010/GetToys",
 
-  // The number of received messages to skip for better performances. Default is 10.
+  // Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
+  "scanTime": 5,
+
+  // Only for debugging. The number of received messages to skip for better performances. Default is 10.
   "limit": 10,
 
   // The Avatar Parameter to synchronize with. It should be generated from a spherical Collider Receiver with "Proximity" on.
