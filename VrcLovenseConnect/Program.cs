@@ -95,8 +95,9 @@ var task = Task.Run(async () =>
         try
         {
             // Listens for one tick. Non-blocking.
-            messageReceived = receiver.TryReceive(out OscPacket packet);
-
+            //messageReceived = receiver.TryReceive(out OscPacket packet);
+            messageReceived = true;
+            OscPacket packet = new OscMessage("/avatar/parameters/LovenseHaptics", 0.1f);
 
             // Message received, sends intensity to the toy's vibration.
             if (messageReceived)
@@ -193,7 +194,7 @@ async Task VibrateToy(int intensity)
         }
 
         // Vibrates the toy with the set intensity.
-        if (!await LovenseConnect.VibrateToy(config.Address, toy?.ToyID ?? string.Empty, intensity))
+        if (!await LovenseConnect.VibrateToy(config.Address, toy?.Id ?? string.Empty, intensity))
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("WARNING: Lovense update failed! Please check that the address in the config.json file is the one provided by the Lovense Connect app on your phone.");

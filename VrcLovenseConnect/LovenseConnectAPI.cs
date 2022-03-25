@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq; // Tools > NuGet Package Manager > Package Manager Console > Install-Package Newtonsoft.Json
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,19 +26,19 @@ namespace LovenseConnectAPI
         public class LovenseToy
         {
             #region Debug Info
-            public string FirmwareVersion { get; set; } = "0";
-            public string ToyVersion { get; set; } = "";
+            public string FVersion { get; set; } = "0";
+            public string Version { get; set; } = "";
             #endregion
 
             #region Useful Info
-            public string LovenseToyType { get; set; } = "Unknown";
+            public string Name { get; set; } = "Unknown";
 
-            public string BatteryPercentage { get; set; } = "0%";
-            public bool ToyStatus { get; set; } = false;
+            public string Battery { get; set; } = "0%";
+            public bool Status { get; set; } = false;
 
-            public string ToyID { get; set; } = "";
+            public string Id { get; set; } = "";
 
-            public string ToyNickName { get; set; } = "";
+            public string NickName { get; set; } = "";
             #endregion
         }
 
@@ -61,11 +62,6 @@ namespace LovenseConnectAPI
             if (string.IsNullOrEmpty(url))
             {
                 return null;
-            }
-
-            if (Client == null)
-            {
-                Client = new HttpClient();
             }
 
             IsRequestPending = true;
@@ -99,35 +95,10 @@ namespace LovenseConnectAPI
 
             foreach (JProperty toyid in data.Properties())
             {
-                string NickName = toyid?.Value?.Value<string>("nickName") ?? string.Empty;
-
-                string FirmwareVersion = toyid?.Value?.Value<string>("fVersion") ?? string.Empty;
-
-                string Type = toyid?.Value?.Value<string>("name") ?? string.Empty;
-
-                string ToyID = toyid?.Value?.Value<string>("id") ?? string.Empty;
-                string BatteryPercentage = toyid?.Value?.Value<string>("battery") ?? string.Empty + "%";
-                string ToyVersion = toyid?.Value?.Value<string>("version") ?? string.Empty;
-                bool ToyStatus = toyid?.Value?.Value<string>("status") != "0";
-
-                toys.Add(new LovenseToy()
-                {
-                    #region Debug Info
-                    FirmwareVersion = FirmwareVersion,
-                    ToyVersion = ToyVersion,
-                    #endregion
-
-                    #region Useful Info
-                    LovenseToyType = Type,
-
-                    BatteryPercentage = BatteryPercentage,
-                    ToyStatus = ToyStatus,
-
-                    ToyID = ToyID,
-
-                    ToyNickName = NickName
-                    #endregion
-                });
+                LovenseToy? toy = JsonConvert.DeserializeObject<LovenseToy>(toyid.Value.ToString());
+                
+                if (toy != null)
+                    toys.Add(toy);
             }
 
             Toys = toys;
@@ -148,7 +119,7 @@ namespace LovenseConnectAPI
                 return null;
             }
 
-            return (await GetToys(url))?.FirstOrDefault(o => o.ToyID == id);
+            return (await GetToys(url))?.FirstOrDefault(o => o.Id == id);
         }
 
         /// <summary>
@@ -198,11 +169,6 @@ namespace LovenseConnectAPI
                     amount = 20;
                 }
 
-                if (Client == null)
-                {
-                    Client = new HttpClient();
-                }
-
                 DelayWatch.Reset();
 
                 if (Toys == null || Toys.Count == 0)
@@ -210,7 +176,7 @@ namespace LovenseConnectAPI
                     return false;
                 }
 
-                LovenseToy? toy = Toys?.Find(o => o.ToyID == id);
+                LovenseToy? toy = Toys?.Find(o => o.Id == id);
 
                 IsRequestPending = true;
 
@@ -219,13 +185,13 @@ namespace LovenseConnectAPI
                     DelayWatch.Start();
                 }
 
-                if (toy?.LovenseToyType == "Unknown")
+                if (toy?.Name == "Unknown")
                 {
                     IsRequestPending = false;
                     return false; // Assume Toy Disconnected
                 }
 
-                using var packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.ToyID ?? string.Empty);
+                using var packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.Id ?? string.Empty);
                 using var content = packet.Content;
                 var response = await content.ReadAsStringAsync();
 
@@ -236,11 +202,11 @@ namespace LovenseConnectAPI
                     return false;
                 }
 
-                if (toy?.LovenseToyType.ToLower().Contains("edge") ?? false)
+                if (toy?.Name.ToLower().Contains("edge") ?? false)
                 {
-                    await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate1?v=" + amount + "&t=" + toy.ToyID);
+                    await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate1?v=" + amount + "&t=" + toy.Id);
 
-                    using var vibrate2Packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate2?v=" + amount + "&t=" + toy.ToyID);
+                    using var vibrate2Packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate2?v=" + amount + "&t=" + toy.Id);
                     using var vibrate2Content = vibrate2Packet.Content;
                     response = await vibrate2Content.ReadAsStringAsync();
 
@@ -253,7 +219,7 @@ namespace LovenseConnectAPI
                 }
                 else
                 {
-                    using var vibratePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.ToyID);
+                    using var vibratePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.Id);
                     using var vibrateContent = vibratePacket.Content;
                     response = await vibrateContent.ReadAsStringAsync();
 
@@ -265,15 +231,15 @@ namespace LovenseConnectAPI
                     }
                 }
 
-                if (toy?.LovenseToyType.ToLower().Contains("max") ?? false)
+                if (toy?.Name.ToLower().Contains("max") ?? false)
                 {
-                    using var airAutoPacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/AirAuto?v=" + RangeConv(amount, 0, 20, 0, 3) + "&t=" + toy.ToyID);
+                    using var airAutoPacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/AirAuto?v=" + RangeConv(amount, 0, 20, 0, 3) + "&t=" + toy.Id);
                     using var airAutoContent = airAutoPacket.Content;
                     response = await airAutoContent.ReadAsStringAsync();
                 }
-                else if (toy?.LovenseToyType.ToLower().Contains("nora") ?? false)
+                else if (toy?.Name.ToLower().Contains("nora") ?? false)
                 {
-                    using var rotatePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Rotate?v=" + amount + "&t=" + toy.ToyID);
+                    using var rotatePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Rotate?v=" + amount + "&t=" + toy.Id);
                     using var rotateContent = rotatePacket.Content;
                     response = await rotateContent.ReadAsStringAsync();
                 }
@@ -328,11 +294,6 @@ namespace LovenseConnectAPI
                     return false;
                 }
 
-                if (Client == null)
-                {
-                    Client = new HttpClient();
-                }
-
                 if (Toys == null || Toys.Count == 0)
                 {
                     return false;
@@ -340,13 +301,13 @@ namespace LovenseConnectAPI
 
                 IsRequestPending = true;
 
-                var toy = Toys.Find(o => o.ToyID == id);
+                var toy = Toys.Find(o => o.Id == id);
 
                 foreach (int amount in amounts)
                 {
                     DelayWatch.Reset();
 
-                    using var packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.ToyID ?? string.Empty);
+                    using var packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.Id ?? string.Empty);
                     using var content = packet.Content;
                     var response = await content.ReadAsStringAsync();
 
@@ -357,11 +318,11 @@ namespace LovenseConnectAPI
                         return false;
                     }
 
-                    if (toy?.LovenseToyType.ToLower().Contains("edge") ?? false)
+                    if (toy?.Name.ToLower().Contains("edge") ?? false)
                     {
-                        await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate1?v=" + amount + "&t=" + toy.ToyID);
+                        await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate1?v=" + amount + "&t=" + toy.Id);
 
-                        using var vibrate2Packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate2?v=" + amount + "&t=" + toy.ToyID);
+                        using var vibrate2Packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate2?v=" + amount + "&t=" + toy.Id);
                         using var vibrate2Content = vibrate2Packet.Content;
                         response = await vibrate2Content.ReadAsStringAsync();
 
@@ -374,7 +335,7 @@ namespace LovenseConnectAPI
                     }
                     else
                     {
-                        using var vibratePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.ToyID);
+                        using var vibratePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.Id);
                         using var vibrateContent = vibratePacket.Content;
                         response = await vibrateContent.ReadAsStringAsync();
 
@@ -386,15 +347,15 @@ namespace LovenseConnectAPI
                         }
                     }
 
-                    if (toy?.LovenseToyType.ToLower().Contains("max") ?? false)
+                    if (toy?.Name.ToLower().Contains("max") ?? false)
                     {
-                        using var airAutoPacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/AirAuto?v=" + RangeConv(amount, 0, 20, 0, 3) + "&t=" + toy.ToyID);
+                        using var airAutoPacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/AirAuto?v=" + RangeConv(amount, 0, 20, 0, 3) + "&t=" + toy.Id);
                         using var airAutoContent = airAutoPacket.Content;
                         response = await airAutoContent.ReadAsStringAsync();
                     }
-                    else if (toy?.LovenseToyType.ToLower().Contains("nora") ?? false)
+                    else if (toy?.Name.ToLower().Contains("nora") ?? false)
                     {
-                        using var rotatePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Rotate?v=" + amount + "&t=" + toy.ToyID);
+                        using var rotatePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Rotate?v=" + amount + "&t=" + toy.Id);
                         using var rotateContent = rotatePacket.Content;
                         response = await rotateContent.ReadAsStringAsync();
                     }
