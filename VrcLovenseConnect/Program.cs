@@ -95,9 +95,7 @@ var task = Task.Run(async () =>
         try
         {
             // Listens for one tick. Non-blocking.
-            //messageReceived = receiver.TryReceive(out OscPacket packet);
-            messageReceived = true;
-            OscPacket packet = new OscMessage("/avatar/parameters/LovenseHaptics", 0.1f);
+            messageReceived = receiver.TryReceive(out OscPacket packet);
 
             // Message received, sends intensity to the toy's vibration.
             if (messageReceived)
