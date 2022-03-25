@@ -22,7 +22,7 @@ In the config.json file next to the executable, copy this URL to the "address" f
 Then simply launch the program after VRChat is open.
 
 # Buttplug.io Compatible Toys (NEW!)
-Simply connect your toy to your PC through a cable or Bluetooth. Lovense toys should work with this protocol too.
+Simply connect your toy to your PC through a cable or Bluetooth. Lovense toys should work with basic features in this protocol too.
 
 ## Avatar Setup
 Your avatar requires a spherical Contact Receiver with "Proximity" mode. Set it up with any Contact Sender, whether it's a standard (hands, head...) or a custom one (sharing an unique name between your friends is a good idea).
