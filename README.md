@@ -31,6 +31,11 @@ address: URL to connect to the Lovense Connect app.
 limit: For debugging purpose only. Sets a number of received messages to skip for better performances (default is 10).
 parameter: The name of the parameter sent by the avatar (default is LovenseHaptics).
 
+## What's Next?
+I will implement more Lovense features in the future than just vibrations, with options to control several at a time or one by Contact Receiver for example.
+
+I'm also looking into implementing Buttplug.io to support more toys (I found a wrapper already!).
+
 ## Documentation
 https://docs.vrchat.com/docs/osc-overview
 
