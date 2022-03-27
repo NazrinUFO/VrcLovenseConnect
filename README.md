@@ -1,5 +1,5 @@
 # VRCLovenseConnect
-VRCLovenseConnect is a .NET implementation of the Lovense Connect API and Buttplug.io to synchronize any toy with a VRChat avatar through OSC messages.
+VRCLovenseConnect is a .NET implementation of the Lovense Connect API and Buttplug.io to synchronize **any connected toy** with a VRChat avatar through OSC messages.
 
 ## What does it do exactly?
 With the power of **OSC** and **Avatar Dynamics**, your avatar sends a value between 0.0 and 1.0 to this program through UDP, according to the distance between a Contact Sender and the center of the Contact Receiver.
