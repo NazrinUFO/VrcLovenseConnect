@@ -47,9 +47,7 @@ limit: Only for debugging. The number of received messages to skip for better pe
 parameter: The Avatar Parameter to synchronize with.
 
 ## What's Next?
-I will implement more Lovense features in the future than just vibrations, with options to control several at a time or one by Contact Receiver for example.
-
-~~I'm also looking into implementing Buttplug.io to support more toys (I found a wrapper already!).~~ It's done.
+I will implement more Lovense and Buttplug.io features in the future than just vibrations, with options to control several at a time or one by Contact Receiver for example.
 
 ## Documentation
 VRChat OSC: https://docs.vrchat.com/docs/osc-overview
