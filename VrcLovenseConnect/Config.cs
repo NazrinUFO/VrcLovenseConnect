@@ -48,5 +48,45 @@ namespace VrcLovenseConnect
             Limit = 0;
             Parameter = string.Empty;
         }
+
+        public bool ControlParameters()
+        {
+            if (OscPort <= 0)
+            {
+                Console.WriteLine("Port error in configuration file. Pleaser enter a valid port number.");
+                ConsoleHelper.AwaitUserKeyPress();
+                return false;
+            }
+
+            if (Protocol == "Lovense" && string.IsNullOrWhiteSpace(Address))
+            {
+                Console.WriteLine("Address error in configuration file. Please enter the address provided by the Lovense Connect app on your phone.");
+                ConsoleHelper.AwaitUserKeyPress();
+                return false;
+            }
+
+            if (Protocol == "Buttplug" && ScanTime <= 0)
+            {
+                Console.WriteLine("Scan time error in configuration file. Pleaser enter a non-zero, positive value.");
+                ConsoleHelper.AwaitUserKeyPress();
+                return false;
+            }
+
+            if (Limit <= 0)
+            {
+                Console.WriteLine("Limit error in configuration file. Pleaser enter a non-zero, positive value.");
+                ConsoleHelper.AwaitUserKeyPress();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(Parameter))
+            {
+                Console.WriteLine("Avatar Parameter error in configuration file. Please enter a valid parameter name.");
+                ConsoleHelper.AwaitUserKeyPress();
+                return false;
+            }
+
+            return true;
+        }
     }
 }
