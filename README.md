@@ -12,9 +12,9 @@ It has been tested to be **accurate**, **lightweight** and **fast** (OSC is so f
 Lovense Connect for Android or iOS (also works on PC but requires the Lovense Bluetooth dongle).
 
 ## Quick Start
-There are two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
+There are currently two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
 
-# Buttplug.io Compatible Toys (NEW!)
+# Buttplug.io (NEW!)
 Simply connect your toy to your PC through a cable or Bluetooth. Lovense toys should work with basic features in this protocol too.
 
 You can test the connectivity of your toys with Intiface Desktop.
