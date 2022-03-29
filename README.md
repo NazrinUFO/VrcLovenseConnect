@@ -27,11 +27,34 @@ In the config.json file next to the executable, copy this URL to the "address" f
 Then simply launch the program after VRChat is open.
 
 ## Avatar Setup
-Your avatar requires a spherical Contact Receiver with "Proximity" mode. Set it up with any Contact Sender, whether it's a standard (hands, head...) or a custom one (sharing a name between your friends is a good idea).
+Your avatar requires a spherical Contact Receiver with "Proximity" mode. Set it up to intereact with any Contact Sender you like, whether it's a standard (hands, head...) or a custom one (see "Recommended Contacts Setup" in the DPS section further below).
 
 This Contact Receiver has to be "Local Only" and generate a parameter with the same name as in the config.json file ("LovenseHaptics" by default). Reminder that parameters are case-sensitive.
 
 Finally, add a float in your avatar's Expression Parameters with the same name, default to zero and no saving.
+
+## Dynamic Penetration System
+### Contact Setup
+If you use Dynamic Penetration System by Raliv, for penetrators, Contacts should be at the base, and the radius should have the same length as set in the material settings. Since DPS detection is also spherical, this setup will have 1:1 accuracy.
+
+For orifices that you want to set up with VRCLovenseConnect, you can place Contacts on "Orifice" objects in your avatar, set the center as deep inside the orifices as you want, and adjust the radius to be right at the entrance. Remember, Contact Receivers have to be spherical with "Proximity" on.
+
+### Recommended Contacts Setup
+For a penetrator:
+- one Contact Receiver with at least the "Hands" standard tag, and "Allow Self" and "Allow Others" enabled.
+- one Contact Receiver with an "Orifice" custom tag, and "Allow Others" enabled only.
+- one Contact Sender with a "Penetrator" tag.
+- (Optional) one Contact Receiver with an "OrificeSelf" custom tag, and "Allow Self" enabled only.
+- (Optional) one Contact Sender with a "PenetratorSelf" tag.
+
+For each orifice on which you want toy interactions enabled:
+- one Contact Receiver with at least the "Fingers" standard tag, and "Allow Self" and "Allow Others" enabled.
+- one Contact Receiver with a "Penetrator" custom tag, and "Allow Others" enabled only.
+- one Contact Sender with an "Orifice" tag.
+- (Optional) one Contact Receiver with a "PenetratorSelf" custom tag, and "Allow Self" enabled only.
+- (Optional) one Contact Sender with an "OrificeSelf" tag.
+
+This setup will make sure that you and others can control your toys without any interference.
 
 ## config.json
 **oscPort**: The port to listen OSC messages on. Default is 9001.
@@ -56,6 +79,8 @@ Finally, add a float in your avatar's Expression Parameters with the same name, 
 VRChat OSC: https://docs.vrchat.com/docs/osc-overview
 
 VRChat Contacts: https://docs.vrchat.com/v2022.1.2/docs/contacts
+
+Dynamic Penetration System: https://raliv.gumroad.com/l/lwthuB
 
 Intiface Desktop: https://intiface.com/desktop/
 
