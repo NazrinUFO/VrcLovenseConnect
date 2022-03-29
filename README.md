@@ -41,7 +41,7 @@ Next to the executable should be a config file named "config.json". Open it with
 
 **commandAll**: Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
 
-**vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands.
+**vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands (will control all features if commandAll = true).
 
 **pumpParameter**: The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
 
