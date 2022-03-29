@@ -27,7 +27,7 @@ In the config.json file next to the executable, copy this URL to the "address" f
 Then simply launch the program after VRChat is open.
 
 ## Avatar Setup
-Your avatar requires a spherical Contact Receiver with "Proximity" mode. Set it up with any Contact Sender, whether it's a standard (hands, head...) or a custom one (sharing an unique name between your friends is a good idea).
+Your avatar requires a spherical Contact Receiver with "Proximity" mode. Set it up with any Contact Sender, whether it's a standard (hands, head...) or a custom one (sharing a name between your friends is a good idea).
 
 This Contact Receiver has to be "Local Only" and generate a parameter with the same name as in the config.json file ("LovenseHaptics" by default). Reminder that parameters are case-sensitive.
 
