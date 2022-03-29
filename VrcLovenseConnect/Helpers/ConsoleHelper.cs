@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VrcLovenseConnect
+namespace VrcLovenseConnect.Helpers
 {
     internal static class ConsoleHelper
     {

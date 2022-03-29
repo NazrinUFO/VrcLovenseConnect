@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VrcLovenseConnect
+﻿namespace VrcLovenseConnect.ToyManagers
 {
     internal interface IToyManager : IDisposable
     {
@@ -15,5 +9,9 @@ namespace VrcLovenseConnect
         Task FindToy();
 
         Task Vibrate(float haptics);
+
+        Task Rotate(float haptics);
+
+        Task Pump(float haptics);
     }
 }

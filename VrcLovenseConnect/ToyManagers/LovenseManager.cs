@@ -1,6 +1,6 @@
-﻿using static LovenseConnectAPI.LovenseConnect;
+﻿using static LovenseConnect.LovenseConnectApi;
 
-namespace VrcLovenseConnect
+namespace VrcLovenseConnect.ToyManagers
 {
     internal class LovenseManager : IToyManager
     {
@@ -45,7 +45,27 @@ namespace VrcLovenseConnect
             int intensity = (int)Math.Ceiling(haptics * 20.0f);
 
             // Vibrates the toy with the set intensity.
-            await VibrateToy(address, toy?.Id ?? string.Empty, intensity);
+            await VibrateToy(address, toy?.Id ?? string.Empty, intensity, true);
+        }
+
+        public async Task Rotate(float haptics)
+        {
+            // Scales the received value to Lovense's Rotation scale (0-20).
+            // Source: https://fr.lovense.com/sextoys/developer/doc#solution-3-cam-kit-step3
+            int intensity = (int)Math.Ceiling(haptics * 20.0f);
+
+            // Vibrates the toy with the set intensity.
+            await RotateToy(address, toy?.Id ?? string.Empty, intensity, true);
+        }
+
+        public async Task Pump(float haptics)
+        {
+            // Scales the received value to Lovense's AutoAir scale (0-3).
+            // Source: https://fr.lovense.com/sextoys/developer/doc#solution-3-cam-kit-step3
+            int intensity = (int)Math.Ceiling(haptics * 3.0f);
+
+            // Vibrates the toy with the set intensity.
+            await PumpToy(address, toy?.Id ?? string.Empty, intensity, true);
         }
     }
 }

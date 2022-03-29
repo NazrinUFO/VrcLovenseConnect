@@ -14,6 +14,15 @@
   // Only for debugging. The number of received messages to skip for better performances. Default is 10.
   "limit": 10,
 
-  // The Avatar Parameter to synchronize with.
-  "parameter": "LovenseHaptics"
+  // Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
+  "commandAll": true,
+
+  // The Avatar Parameter to synchronize with for vibration commands.
+  "vibrateParameter": "LovenseHaptics",
+
+  // The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = true).
+  "pumpParameter": "LovensePump",
+
+  // The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = true).
+  "rotateParameter": "LovenseRotate"
 }

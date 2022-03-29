@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VrcLovenseConnect
+namespace VrcLovenseConnect.ToyManagers
 {
     internal class ButtplugManager : IToyManager
     {
@@ -13,15 +13,18 @@ namespace VrcLovenseConnect
         readonly ButtplugClient client;
         ButtplugClientDevice? toy;
         readonly int scanTime;
+        readonly uint moveSpeed;
+        Dictionary<string, float> currentHaptics = new Dictionary<string, float>();
 
         public string ToyName => toy?.Name ?? string.Empty;
 
         public bool IsToyFound => toy != null;
 
-        internal ButtplugManager(int scanTime)
+        internal ButtplugManager(int scanTime, uint moveSpeed)
         {
             // Converts to milliseconds.
-            this.scanTime = scanTime * 1000;
+            this.scanTime = scanTime;
+            this.moveSpeed = moveSpeed;
 
             client = new ButtplugClient("MainClient");
 
@@ -59,8 +62,35 @@ namespace VrcLovenseConnect
 
         public async Task Vibrate(float haptics)
         {
-            if (toy != null)
-                await toy.SendVibrateCmd(haptics);
+            if (!currentHaptics.ContainsKey("Vibrate") || currentHaptics["Vibrate"] != haptics)
+            {
+                currentHaptics["Vibrate"] = haptics;
+
+                if (toy != null)
+                    await toy.SendVibrateCmd(haptics);
+            }
+        }
+
+        public async Task Rotate(float haptics)
+        {
+            if (!currentHaptics.ContainsKey("Rotate") || currentHaptics["Rotate"] != haptics)
+            {
+                currentHaptics["Rotate"] = haptics;
+
+                if (toy != null)
+                    await toy.SendRotateCmd(haptics, true);
+            }
+        }
+
+        public async Task Pump(float haptics)
+        {
+            if (!currentHaptics.ContainsKey("Pump") || currentHaptics["Pump"] != haptics)
+            {
+                currentHaptics["Pump"] = haptics;
+
+                if (toy != null)
+                    await toy.SendLinearCmd(moveSpeed, haptics);
+            }
         }
     }
 }

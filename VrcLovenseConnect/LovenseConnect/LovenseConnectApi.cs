@@ -1,24 +1,19 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Threading.Tasks;
 
 /// <summary>
 /// The Namespace Of The Lovense Connect API; Created By Plague.
 /// </summary>
 
-namespace LovenseConnectAPI
+namespace LovenseConnect
 {
     /// <summary>
     /// The Main Class Of The Lovense Connect API; Created By Plague.
     /// </summary>
     [Obfuscation(Exclude = true, ApplyToMembers = true, StripAfterObfuscation = true)]
-    public class LovenseConnect
+    public class LovenseConnectApi
     {
         /// <summary>
         /// Information About The Lovense Toy, Held In A Convenient Package.
@@ -148,48 +143,14 @@ namespace LovenseConnectAPI
         /// <param name="url">The Local Lovense Connect Server URL.</param>
         /// <param name="id">The Toy ID - Fun Fact: This Is The Device's MAC Address.</param>
         /// <param name="amount">The Vibration Intensity.</param>
-        /// <param name="IgnoreDuplicateRequests">Whether To Ignore Duplicate Requests Or Not.</param>
+        /// <param name="ignoreDuplicateRequests">Whether To Ignore Duplicate Requests Or Not.</param>
         /// <returns></returns>
-        public static async Task<bool> VibrateToy(string url, string id, int amount, bool IgnoreDuplicateRequests = false)
+        public static async Task<bool> VibrateToy(string url, string id, int amount, bool ignoreDuplicateRequests = false)
         {
             try
             {
-                if (IgnoreDuplicateRequests && CurrentLovenseAmount != null && CurrentLovenseAmount.ContainsKey(id) && CurrentLovenseAmount[id] == amount)
-                {
+                if (!InitCommand(id, amount, ignoreDuplicateRequests, "Vibrate", out var toy))
                     return false;
-                }
-
-                if (IsRequestPending)
-                {
-                    return false;
-                }
-
-                if (amount > 20)
-                {
-                    amount = 20;
-                }
-
-                DelayWatch.Reset();
-
-                if (Toys == null || Toys.Count == 0)
-                {
-                    return false;
-                }
-
-                LovenseToy? toy = Toys?.Find(o => o.Id == id);
-
-                IsRequestPending = true;
-
-                if (!DelayWatch.IsRunning)
-                {
-                    DelayWatch.Start();
-                }
-
-                if (toy?.Name == "Unknown")
-                {
-                    IsRequestPending = false;
-                    return false; // Assume Toy Disconnected
-                }
 
                 using var packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.Id ?? string.Empty);
                 using var content = packet.Content;
@@ -231,43 +192,7 @@ namespace LovenseConnectAPI
                     }
                 }
 
-                if (toy?.Name.ToLower().Contains("max") ?? false)
-                {
-                    using var airAutoPacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/AirAuto?v=" + RangeConv(amount, 0, 20, 0, 3) + "&t=" + toy.Id);
-                    using var airAutoContent = airAutoPacket.Content;
-                    response = await airAutoContent.ReadAsStringAsync();
-                }
-                else if (toy?.Name.ToLower().Contains("nora") ?? false)
-                {
-                    using var rotatePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Rotate?v=" + amount + "&t=" + toy.Id);
-                    using var rotateContent = rotatePacket.Content;
-                    response = await rotateContent.ReadAsStringAsync();
-                }
-
-                if (DelayWatch.IsRunning)
-                {
-                    DelayWatch.Stop();
-
-                    LastKnownLatency = (int)DelayWatch.Elapsed.TotalMilliseconds;
-                }
-
-                IsRequestPending = false;
-
-                if (!string.IsNullOrEmpty(response) && response.ToLower().Contains("\"ok\""))
-                {
-                    if (CurrentLovenseAmount != null)
-                    {
-                        CurrentLovenseAmount[id] = amount;
-                    }
-
-                    IsRequestPending = false;
-
-                    return true;
-                }
-
-                IsRequestPending = false;
-
-                return false;
+                return EndCommand("Vibrate", amount, response);
             }
             catch
             {
@@ -277,6 +202,132 @@ namespace LovenseConnectAPI
             }
         }
 
+        /// <summary>
+        /// A Simple "Rotate This Much" Method Which Will Rotate The Toy {x} Amount From The Local Lovense Connect Server URL And ID Of The Toy.
+        /// </summary>
+        /// <param name="url">The Local Lovense Connect Server URL.</param>
+        /// <param name="id">The Toy ID - Fun Fact: This Is The Device's MAC Address.</param>
+        /// <param name="amount">The Rotation Intensity.</param>
+        /// <param name="ignoreDuplicateRequests">Whether To Ignore Duplicate Requests Or Not.</param>
+        /// <returns></returns>
+        public static async Task<bool> RotateToy(string url, string id, int amount, bool ignoreDuplicateRequests = false)
+        {
+            try
+            {
+                if (!InitCommand(id, amount, ignoreDuplicateRequests, "Rotate", out var toy))
+                    return false;
+
+                using var rotatePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Rotate?v=" + amount + "&t=" + toy?.Id);
+                using var rotateContent = rotatePacket.Content;
+                var response = await rotateContent.ReadAsStringAsync();
+
+                return EndCommand("Rotate", amount, response);
+            }
+            catch
+            {
+                IsRequestPending = false;
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// A Simple "Air Contract" Method Which Will Pump The Toy {x} Amount From The Local Lovense Connect Server URL And ID Of The Toy.
+        /// </summary>
+        /// <param name="url">The Local Lovense Connect Server URL.</param>
+        /// <param name="id">The Toy ID - Fun Fact: This Is The Device's MAC Address.</param>
+        /// <param name="amount">The Pumping Intensity.</param>
+        /// <param name="ignoreDuplicateRequests">Whether To Ignore Duplicate Requests Or Not.</param>
+        /// <returns></returns>
+        public static async Task<bool> PumpToy(string url, string id, int amount, bool ignoreDuplicateRequests = false)
+        {
+            try
+            {
+                if (!InitCommand(id, amount, ignoreDuplicateRequests, "AirAuto", out var toy))
+                    return false;
+
+                using var airAutoPacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/AirAuto?v=" + amount + "&t=" + toy?.Id);
+                using var airAutoContent = airAutoPacket.Content;
+                var response = await airAutoContent.ReadAsStringAsync();
+
+                return EndCommand("AirAuto", amount, response);
+            }
+            catch
+            {
+                IsRequestPending = false;
+
+                return false;
+            }
+        }
+
+        private static bool InitCommand(string id, int amount, bool ignoreDuplicateRequests, string command, out LovenseToy? toy)
+        {
+            toy = null;
+
+            if (ignoreDuplicateRequests && CurrentLovenseAmount != null && CurrentLovenseAmount.ContainsKey(command) && CurrentLovenseAmount[command] == amount)
+            {
+                return false;
+            }
+
+            if (IsRequestPending)
+            {
+                return false;
+            }
+
+            DelayWatch.Reset();
+
+            if (Toys == null || Toys.Count == 0)
+            {
+                return false;
+            }
+
+            toy = Toys?.Find(o => o.Id == id);
+
+            IsRequestPending = true;
+
+            if (!DelayWatch.IsRunning)
+            {
+                DelayWatch.Start();
+            }
+
+            if (toy?.Name == "Unknown")
+            {
+                IsRequestPending = false;
+                return false; // Assume Toy Disconnected
+            }
+
+            return true;
+        }
+
+        private static bool EndCommand(string command, int amount, string response)
+        {
+            if (DelayWatch.IsRunning)
+            {
+                DelayWatch.Stop();
+
+                LastKnownLatency = (int)DelayWatch.Elapsed.TotalMilliseconds;
+            }
+
+            IsRequestPending = false;
+
+            if (!string.IsNullOrEmpty(response) && response.ToLower().Contains("\"ok\""))
+            {
+                if (CurrentLovenseAmount != null)
+                {
+                    CurrentLovenseAmount[command] = amount;
+                }
+
+                IsRequestPending = false;
+
+                return true;
+            }
+
+            IsRequestPending = false;
+
+            return false;
+        }
+
+        #region No plan to implement this.
         /// <summary>
         /// A Simple "Vibrate This Much" Method Which Will Vibrate The Toy {x} Amount; Iterating Through The Amounts List Per The Delay From The Local Lovense Connect Server URL And ID Of The Toy.
         /// </summary>
@@ -393,6 +444,7 @@ namespace LovenseConnectAPI
                 return false;
             }
         }
+        #endregion
 
         public static int RangeConv(float input, float MinPossibleInput, float MaxPossibleInput, float MinConv, float MaxConv)
         {

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
-using VrcLovenseConnect;
+using VrcLovenseConnect.Helpers;
+using VrcLovenseConnect.ToyManagers;
 
 // == PROGRAM ==
 OscModule oscModule;
@@ -32,7 +33,7 @@ switch (config.Protocol)
         break;
 
     case "Buttplug":
-        toyManager = new ButtplugManager(config.ScanTime);
+        toyManager = new ButtplugManager(config.ScanTime, (uint)config.Limit);
         break;
 
     default:
@@ -49,7 +50,7 @@ using (toyManager)
     if (toyManager.IsToyFound)
     {
         ConsoleHelper.PrintSuccess($"Toy found: {toyManager.ToyName}");
-        ConsoleHelper.PrintInfo("INFO: Please turn off your toy before closing the program.");
+        ConsoleHelper.PrintInfo("INFO: Although an attempt to stop the toy will be happening before closing the program, you may still have to manually turn it off.");
     }
     else
     {
@@ -77,6 +78,18 @@ using (toyManager)
     // Stops vibration if started.
     if (oscModule.Haptics.HasValue && oscModule.Haptics.Value > 0)
     {
-        toyManager.Vibrate(0).Wait();
+        try
+        {
+            toyManager.Vibrate(0).Wait();
+            toyManager.Pump(0).Wait();
+            toyManager.Rotate(0).Wait();
+        }
+        catch (Exception ex)
+        {
+            // No critical error to cause a full stop.
+#if DEBUG
+            ConsoleHelper.PrintError(ex.Message);
+#endif
+        }
     }
 }
