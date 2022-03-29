@@ -34,23 +34,23 @@ This Contact Receiver has to be "Local Only" and generate a parameter with the s
 Finally, add a float in your avatar's Expression Parameters with the same name, default to zero and no saving.
 
 ## config.json
-oscPort: The port to listen OSC messages on. Default is 9001.
+**oscPort**: The port to listen OSC messages on. Default is 9001.
 
-protocol: The protocol to use for toy controls (Lovense or Buttplug).
+**protocol**: The protocol to use for toy controls (Lovense or Buttplug).
 
-address: Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
+**address**: Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
 
-scanTime: Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
+**scanTime**: Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
 
-limit: Only for debugging. The number of received messages to skip for better performances. Default is 10.
+**limit**: Only for debugging. The number of received messages to skip for better performances. Default is 10.
 
-commandAll: Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
+**commandAll**: Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
 
-vibrateParameter: The Avatar Parameter to synchronize with for vibration commands.
+**vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands.
 
-pumpParameter: The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
+**pumpParameter**: The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
 
-rotateParameter: The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
+**rotateParameter**: The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
 
 ## Documentation
 VRChat OSC: https://docs.vrchat.com/docs/osc-overview
