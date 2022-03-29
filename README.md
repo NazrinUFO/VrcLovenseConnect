@@ -11,22 +11,43 @@ It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so f
 ## Requirements
 Lovense Connect for Android or iOS (also works on PC but requires the Lovense Bluetooth dongle).
 
-## Quick Start
+# Toy Setup
 There are currently two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
 
-# Buttplug.io (NEW!)
+## Buttplug.io (NEW!)
 Simply connect your toy to your PC through a cable or Bluetooth. Lovense toys should work with basic features in this protocol too.
 
 You can test the connectivity of your toys with Intiface Desktop.
 
-# Lovense Connect
+## Lovense Connect
 Open the Lovense Connect app on your phone or PC, then select the green shield icon to reveal a URL.
 
 In the config.json file next to the executable, copy this URL to the "address" field.
 
 Then simply launch the program after VRChat is open.
 
-## Avatar Setup
+## config.json
+Next to the executable should be a config file named "config.json". Open it with any text editor to change its values.
+
+**oscPort**: The port to listen OSC messages on. Default is 9001.
+
+**protocol**: The protocol to use for toy controls (Lovense or Buttplug).
+
+**address**: Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
+
+**scanTime**: Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
+
+**limit**: Only for debugging. The number of received messages to skip for better performances. Default is 10.
+
+**commandAll**: Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
+
+**vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands.
+
+**pumpParameter**: The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
+
+**rotateParameter**: The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
+
+# Avatar Setup
 Your avatar requires a spherical Contact Receiver with "Proximity" mode. Set it up to intereact with any Contact Sender you like, whether it's a standard (hands, head...) or a custom one (see "Recommended Contacts Setup" in the DPS section further below).
 
 This Contact Receiver has to be "Local Only" and generate a parameter with the same name as in the config.json file ("LovenseHaptics" by default). Reminder that parameters are case-sensitive.
@@ -54,26 +75,7 @@ For each orifice on which you want toy interactions enabled:
 - (Optional) one Contact Receiver with a "PenetratorSelf" custom tag, and "Allow Self" enabled only.
 - (Optional) one Contact Sender with an "OrificeSelf" tag.
 
-This setup will make sure that you and others can control your toys without any interference.
-
-## config.json
-**oscPort**: The port to listen OSC messages on. Default is 9001.
-
-**protocol**: The protocol to use for toy controls (Lovense or Buttplug).
-
-**address**: Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
-
-**scanTime**: Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
-
-**limit**: Only for debugging. The number of received messages to skip for better performances. Default is 10.
-
-**commandAll**: Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
-
-**vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands.
-
-**pumpParameter**: The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
-
-**rotateParameter**: The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
+This setup will make sure that you and others can control your toys without any weird behavior. Tags can be changed to be shared only to a few people for a more private use, kind of like a password.
 
 ## Documentation
 VRChat OSC: https://docs.vrchat.com/docs/osc-overview
