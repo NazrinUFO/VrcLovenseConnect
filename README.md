@@ -6,7 +6,7 @@ With the power of **OSC** and **Avatar Dynamics**, your avatar sends a value bet
 
 This value is converted and transferred to the Lovense Connect through HTTP, with a call to vibrate a connected toy.
 
-It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so fast indeed that I had to set a limit of processed messages to be more performant lol.
+It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so fast indeed that I had to set a limit of processed messages to have less delay lol.
 
 ## Requirements
 Lovense Connect for Android or iOS (also works on PC but requires the Lovense Bluetooth dongle).
