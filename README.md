@@ -44,10 +44,13 @@ scanTime: Only for Buttplug protocol. The time to scan for a toy in seconds. Def
 
 limit: Only for debugging. The number of received messages to skip for better performances. Default is 10.
 
-parameter: The Avatar Parameter to synchronize with.
+commandAll: Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
 
-## What's Next?
-I will implement more Lovense and Buttplug.io features in the future than just vibrations, with options to control several at a time or one by Contact Receiver for example.
+vibrateParameter: The Avatar Parameter to synchronize with for vibration commands.
+
+pumpParameter: The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
+
+rotateParameter: The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
 
 ## Documentation
 VRChat OSC: https://docs.vrchat.com/docs/osc-overview
