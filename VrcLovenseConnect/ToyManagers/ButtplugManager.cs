@@ -14,7 +14,8 @@ namespace VrcLovenseConnect.ToyManagers
         ButtplugClientDevice? toy;
         readonly int scanTime;
         readonly uint moveSpeed;
-        Dictionary<string, float> currentHaptics = new Dictionary<string, float>();
+        readonly Dictionary<string, float> currentHaptics = new Dictionary<string, float>();
+        bool vibrateUnsupported, linearUnsupported, rotateUnsupported;
 
         public string ToyName => toy?.Name ?? string.Empty;
 
@@ -62,34 +63,64 @@ namespace VrcLovenseConnect.ToyManagers
 
         public async Task Vibrate(float haptics)
         {
-            if (!currentHaptics.ContainsKey("Vibrate") || currentHaptics["Vibrate"] != haptics)
+            if (!vibrateUnsupported && !currentHaptics.ContainsKey("Vibrate") || currentHaptics["Vibrate"] != haptics)
             {
                 currentHaptics["Vibrate"] = haptics;
 
                 if (toy != null)
-                    await toy.SendVibrateCmd(haptics);
+                {
+                    try
+                    {
+                        await toy.SendVibrateCmd(haptics);
+                    }
+                    catch
+                    {
+                        // If any error happens, disables the feature for safety.
+                        vibrateUnsupported = true;
+                    }
+                }
             }
         }
 
         public async Task Rotate(float haptics)
         {
-            if (!currentHaptics.ContainsKey("Rotate") || currentHaptics["Rotate"] != haptics)
+            if (!rotateUnsupported && !currentHaptics.ContainsKey("Rotate") || currentHaptics["Rotate"] != haptics)
             {
                 currentHaptics["Rotate"] = haptics;
 
                 if (toy != null)
-                    await toy.SendRotateCmd(haptics, true);
+                {
+                    try
+                    {
+                        await toy.SendRotateCmd(haptics, true);
+                    }
+                    catch
+                    {
+                        // If any error happens, disables the feature for safety.
+                        rotateUnsupported = true;
+                    }
+                }
             }
         }
 
         public async Task Pump(float haptics)
         {
-            if (!currentHaptics.ContainsKey("Pump") || currentHaptics["Pump"] != haptics)
+            if (!linearUnsupported && !currentHaptics.ContainsKey("Pump") || currentHaptics["Pump"] != haptics)
             {
                 currentHaptics["Pump"] = haptics;
 
                 if (toy != null)
-                    await toy.SendLinearCmd(moveSpeed, haptics);
+                {
+                    try
+                    {
+                        await toy.SendLinearCmd(moveSpeed, haptics);
+                    }
+                    catch
+                    {
+                        // If any error happens, disables the feature for safety.
+                        linearUnsupported = true;
+                    }
+                }
             }
         }
     }

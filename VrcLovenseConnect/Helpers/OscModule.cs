@@ -10,6 +10,9 @@ namespace VrcLovenseConnect.Helpers
         readonly IToyManager toyManager;
         double retries;
         int nbrMessages;
+        bool vibrateUnsupported;
+        bool linearUnsupported;
+        bool rotateUnsupported;
 
         internal bool Play { get; set; } = true;
 
@@ -68,7 +71,7 @@ namespace VrcLovenseConnect.Helpers
 #endif
                                 Haptics = message.FirstOrDefault() as float?;
 
-                                if (Haptics.HasValue)
+                                if (Haptics.HasValue && Haptics.Value > 0)
                                 {
                                     // Commands the toy.
                                     if (message.Address == config.VibrateParameter)
@@ -84,11 +87,11 @@ namespace VrcLovenseConnect.Helpers
                                             await toyManager.Vibrate(Haptics.Value);
                                         }
                                     }
-                                    else if (message.Address == config.PumpParameter)
+                                    else if (!config.CommandAll && message.Address == config.PumpParameter)
                                     {
                                         await toyManager.Pump(Haptics.Value);
                                     }
-                                    else if (message.Address == config.RotateParameter)
+                                    else if (!config.CommandAll && message.Address == config.RotateParameter)
                                     {
                                         await toyManager.Rotate(Haptics.Value);
                                     }
@@ -115,6 +118,7 @@ namespace VrcLovenseConnect.Helpers
                             if (retries > config.Limit && Haptics.HasValue && Haptics.Value > 0)
                             {
                                 Haptics = 0;
+
                                 await toyManager.Vibrate(0);
                                 await toyManager.Pump(0);
                                 await toyManager.Rotate(0);
@@ -127,7 +131,7 @@ namespace VrcLovenseConnect.Helpers
                 }
                 catch (Exception ex)
                 {
-                    // No critical error to cause a full stop.
+                    // No critical error that requires a full stop.
 #if DEBUG
                     ConsoleHelper.PrintError(ex.Message);
 #endif

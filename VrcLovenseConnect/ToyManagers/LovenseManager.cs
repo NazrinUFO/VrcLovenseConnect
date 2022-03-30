@@ -7,6 +7,7 @@ namespace VrcLovenseConnect.ToyManagers
         private bool disposedValue;
         readonly string address;
         LovenseToy? toy;
+        bool vibrateUnsupported, linearUnsupported, rotateUnsupported;
 
         public string ToyName => toy?.Name ?? string.Empty;
 
@@ -45,7 +46,18 @@ namespace VrcLovenseConnect.ToyManagers
             int intensity = (int)Math.Ceiling(haptics * 20.0f);
 
             // Vibrates the toy with the set intensity.
-            await VibrateToy(address, toy?.Id ?? string.Empty, intensity, true);
+            if (!vibrateUnsupported)
+            {
+                try
+                {
+                    await VibrateToy(address, toy?.Id ?? string.Empty, intensity, true);
+                }
+                catch
+                {
+                    // If any error happens, disables the feature for safety.
+                    vibrateUnsupported = true;
+                }
+            }
         }
 
         public async Task Rotate(float haptics)
@@ -55,7 +67,18 @@ namespace VrcLovenseConnect.ToyManagers
             int intensity = (int)Math.Ceiling(haptics * 20.0f);
 
             // Vibrates the toy with the set intensity.
-            await RotateToy(address, toy?.Id ?? string.Empty, intensity, true);
+            if (!rotateUnsupported)
+            {
+                try
+                {
+                    await RotateToy(address, toy?.Id ?? string.Empty, intensity, true);
+                }
+                catch
+                {
+                    // If any error happens, disables the feature for safety.
+                    rotateUnsupported = true;
+                }
+            }
         }
 
         public async Task Pump(float haptics)
@@ -65,7 +88,17 @@ namespace VrcLovenseConnect.ToyManagers
             int intensity = (int)Math.Ceiling(haptics * 3.0f);
 
             // Vibrates the toy with the set intensity.
-            await PumpToy(address, toy?.Id ?? string.Empty, intensity, true);
+            if (!linearUnsupported)
+            {
+                try
+                {
+                    await PumpToy(address, toy?.Id ?? string.Empty, intensity, true);
+                }
+                catch
+                {
+                    linearUnsupported = true;
+                }
+            }
         }
     }
 }
