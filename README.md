@@ -9,7 +9,8 @@ This value is converted and transferred to the Lovense Connect through HTTP, wit
 It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so fast indeed that I had to set a limit of processed messages to have less delay lol.
 
 ## Requirements
-Lovense Connect for Android or iOS (also works on PC but requires the Lovense Bluetooth dongle).
+- Lovense Connect for Android or iOS (also works on PC but requires the Lovense Bluetooth dongle).
+- At least 8/128 of free memory in your Avatar Expression Parameters.
 
 # Toy Setup
 There are currently two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
