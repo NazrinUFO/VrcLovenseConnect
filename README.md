@@ -76,7 +76,7 @@ For each orifice on which you want toy interactions enabled:
 - (Optional) one Contact Receiver with a "PenetratorSelf" custom tag, and "Allow Self" enabled only.
 - (Optional) one Contact Sender with an "OrificeSelf" tag.
 
-This setup will make sure that you and others can control your toys without any weird behavior. Tags can be changed to be shared only to a few people for a more private use, kind of like a password.
+This setup will make sure that you and others can control your toys without any interference. Tags can be changed to be shared only to a few people for a more private use, kind of like a password.
 
 # What's next?
 
