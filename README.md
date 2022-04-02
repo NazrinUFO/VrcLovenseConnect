@@ -44,9 +44,15 @@ Next to the executable should be a config file named "config.json". Open it with
 
 **vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands (will control all features if commandAll = true).
 
+**vibrateIntensity**: The intensity for vibrations (0.0 to 1.0, boolean Contacts only).
+
 **pumpParameter**: The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
 
+**pumpIntensity**: The intensity for pumping (0.0 to 1.0, boolean Contacts only).
+
 **rotateParameter**: The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
+
+**rotateIntensity**: The intensity for rotations (0.0 to 1.0, boolean Contacts only).
 
 # Avatar Setup
 ## Interaction Types
