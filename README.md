@@ -56,7 +56,7 @@ This Contact Receiver has to be "Local Only" and generate a parameter with the s
 Finally, add a float in your avatar's Expression Parameters with the same name, default to zero and no saving.
 
 ## Dynamic Penetration System
-### Contact Setup
+### Contacts Setup
 If you use Dynamic Penetration System by Raliv, for penetrators, Contacts should be at the base, and the radius should have the same length as set in the material settings. Since DPS detection is also spherical, this setup will have 1:1 accuracy.
 
 For orifices that you want to set up with VRCLovenseConnect, you can place Contacts on "Orifice" objects in your avatar, set the center as deep inside the orifices as you want, and adjust the radius to be right at the entrance. Remember, Contact Receivers have to be spherical with "Proximity" on.
