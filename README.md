@@ -2,7 +2,7 @@
 VRCLovenseConnect is a .NET implementation of the Lovense Connect API and Buttplug.io to synchronize **any connected toy** with a VRChat avatar through OSC messages.
 
 ## What does it do exactly?
-With the power of **OSC** and **Avatar Dynamics**, your avatar sends a value between 0.0 and 1.0 to this program through UDP, according to the distance between a Contact Sender and the center of the Contact Receiver.
+With the power of **OSC** and **Avatar Dynamics**, your avatar sends a value between 0.0 and 1.0 to this program through UDP.
 
 This value is converted and transferred to the Lovense Connect through HTTP, with a call to vibrate a connected toy.
 
@@ -10,7 +10,7 @@ It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so f
 
 ## Requirements
 - Lovense Connect for Android or iOS (also works on PC but requires the Lovense Bluetooth dongle).
-- At least 8/128 of free memory in your Avatar Expression Parameters.
+- At least 8/128 of free memory in your Avatar Expression Parameters, or 1/128 if not using Proximity mode (should not be the case when Avatar Dynamics goes live).
 
 # Toy Setup
 There are currently two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
@@ -49,11 +49,26 @@ Next to the executable should be a config file named "config.json". Open it with
 **rotateParameter**: The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
 
 # Avatar Setup
-Your avatar requires a spherical Contact Receiver with "Proximity" mode. Set it up to intereact with any Contact Sender you like, whether it's a standard (hands, head...) or a custom one (see "Recommended Contacts Setup" in the DPS section further below).
+## Interaction Types
+There are two modes of interaction for VRCLovenseConnect, named "Touch" and "Proximity".
+
+- In "Touch" mode, just having a Contact Sender touch a Contact Receiver will activate your toy, with an intensity set by the config.json file.
+- In "Proximity" mode, the intensity will be proportionate to the distance between the border of a Contact Sender and the center of a Contact Receiver, within its area of effect.
+
+### "Touch" Mode
+Your avatar requires a spherical Contact Receiver with the Receiver Type set as "Constant" and the Parameter Type set as a boolean.
+
+Set it up to interact with any Contact Sender you want, whether it's a standard (hands, head...) or a custom one (for examples, see "Recommended Contacts Setup" in the DPS section further below).
 
 This Contact Receiver has to be "Local Only" and generate a parameter with the same name as in the config.json file ("LovenseHaptics" by default). Reminder that parameters are case-sensitive.
 
-Finally, add a float in your avatar's Expression Parameters with the same name, default to zero and no saving.
+Finally, add a boolean in your avatar's Expression Parameters with the same name, default to "false" and no saving.
+
+### "Proximity" Mode
+The setup is not very different from "Touch" mode. Just change these settings:
+
+- The Contact Receiver must have the Receiver Type set as "Proximity" and the Parameter Type set as a float.
+- Instead of a boolean, add a float in your avatar's Expression Parameters, default to zero and no saving.
 
 ## Dynamic Penetration System
 ### Contacts Setup
@@ -72,7 +87,7 @@ For a penetrator:
 For each orifice on which you want toy interactions enabled:
 - one Contact Receiver with at least the "Fingers" standard tag, and "Allow Self" and "Allow Others" enabled.
 - one Contact Receiver with a "Penetrator" custom tag, and "Allow Others" enabled only.
-- one Contact Sender with an "Orifice" tag.
+- one Contact Sender with an "Orifice" tag (can have a different shape than the Receiver).
 - (Optional) one Contact Receiver with a "PenetratorSelf" custom tag, and "Allow Self" enabled only.
 - (Optional) one Contact Sender with an "OrificeSelf" tag.
 
@@ -80,7 +95,6 @@ This setup will make sure that you and others can control your toys without any 
 
 # What's next?
 
-- Starting from VRChat Open Beta build 1186: having the option to use booleans instead of floats, for an "all or nothing" touch, with an intensity setting in the config file.
 - When Avatar Dynamics goes live: Removing the use of Expression Parameters and replacing "Local-Only" Contacts with normal Contacts to send OSC messages directly, in order to save Expression Parameters memory.
 
 # Documentation
