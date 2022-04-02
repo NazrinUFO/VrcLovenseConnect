@@ -44,14 +44,29 @@ namespace VrcLovenseConnect.Helpers
         public string VibrateParameter { get; set; }
 
         /// <summary>
+        /// The intensity for vibrations (0.0 to 1.0, boolean only).
+        /// </summary>
+        public float VibrateIntensity { get; set; }
+
+        /// <summary>
         /// The Avatar Parameter to synchronize with for pumping/linear commands.
         /// </summary>
         public string PumpParameter { get; set; }
 
         /// <summary>
+        /// The intensity for pumping (0.0 to 1.0, boolean Contacts only).
+        /// </summary>
+        public float PumpIntensity { get; set; }
+
+        /// <summary>
         /// The Avatar Parameter to synchronize with for rotation commands.
         /// </summary>
         public string RotateParameter { get; set; }
+
+        /// <summary>
+        /// The intensity for rotations (0.0 to 1.0, boolean Contacts only).
+        /// </summary>
+        public float RotateIntensity { get; set; }
 
         /// <summary>
         /// The default constructor.
@@ -63,8 +78,11 @@ namespace VrcLovenseConnect.Helpers
             Limit = 0;
             CommandAll = false;
             VibrateParameter = string.Empty;
+            VibrateIntensity = 0;
             PumpParameter = string.Empty;
+            PumpIntensity = 0;
             RotateParameter = string.Empty;
+            RotateIntensity = 0;
         }
 
         public bool ControlParameters()
@@ -104,6 +122,13 @@ namespace VrcLovenseConnect.Helpers
                 return false;
             }
 
+            if (VibrateIntensity <= 0)
+            {
+                ConsoleHelper.PrintError("Vibration intensity error in configuration file. Pleaser enter a non-zero, positive value.");
+                ConsoleHelper.AwaitUserKeyPress();
+                return false;
+            }
+
             if (!CommandAll && string.IsNullOrWhiteSpace(PumpParameter))
             {
                 ConsoleHelper.PrintError("Pumping Avatar Parameter error in configuration file. Please enter a valid name.");
@@ -111,9 +136,23 @@ namespace VrcLovenseConnect.Helpers
                 return false;
             }
 
+            if (!CommandAll && PumpIntensity <= 0)
+            {
+                ConsoleHelper.PrintError("Pumping intensity error in configuration file. Pleaser enter a non-zero, positive value.");
+                ConsoleHelper.AwaitUserKeyPress();
+                return false;
+            }
+
             if (!CommandAll && string.IsNullOrWhiteSpace(RotateParameter))
             {
                 ConsoleHelper.PrintError("Rotation Avatar Parameter error in configuration file. Please enter a valid name.");
+                ConsoleHelper.AwaitUserKeyPress();
+                return false;
+            }
+
+            if (!CommandAll && RotateIntensity <= 0)
+            {
+                ConsoleHelper.PrintError("Rotation intensity error in configuration file. Pleaser enter a non-zero, positive value.");
                 ConsoleHelper.AwaitUserKeyPress();
                 return false;
             }

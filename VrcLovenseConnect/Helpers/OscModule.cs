@@ -16,7 +16,9 @@ namespace VrcLovenseConnect.Helpers
 
         internal bool Play { get; set; } = true;
 
-        internal float? Haptics { get; set; }
+        internal float Haptics { get; set; }
+
+        internal bool IsBooleanContact { get; set; }
 
         internal OscModule(Config config, IToyManager toyManager)
         {
@@ -45,7 +47,8 @@ namespace VrcLovenseConnect.Helpers
                     // Listens for one tick. Non-blocking.
 #if DEBUG
                     messageReceived = true;
-                    OscPacket packet = new OscMessage(config.VibrateParameter, 0.1f);
+                    //OscPacket packet = new OscMessage(config.VibrateParameter, 0.1f);
+                    OscPacket packet = new OscMessage(config.VibrateParameter, true);
 #else
                     messageReceived = oscReceiver.TryReceive(out OscPacket packet);
 #endif
@@ -61,71 +64,63 @@ namespace VrcLovenseConnect.Helpers
                                 && (message.Address == config.PumpParameter
                                 || message.Address == config.RotateParameter))))
                         {
-                            retries = 0;
-
-                            // Looks into the message every N-calls
+                            // Looks into every N message.
                             if (nbrMessages == 0)
                             {
-#if DEBUG
-                                Console.WriteLine(message.ToString());
-#endif
-                                Haptics = message.FirstOrDefault() as float?;
+                                // Reads the message's value and determines its type.
+                                IsBooleanContact = message.FirstOrDefault() as bool? ?? false;
+                                Haptics = IsBooleanContact ? 0.0f : (message.FirstOrDefault() as float? ?? 0.0f);
 
-                                if (Haptics.HasValue && Haptics.Value > 0)
+                                if (IsBooleanContact || Haptics > 0)
                                 {
-                                    // Commands the toy.
+#if DEBUG
+                                    Console.WriteLine(message.ToString());
+#endif
+
+                                    retries = 0;
+
+                                    // Controls the toy.
                                     if (message.Address == config.VibrateParameter)
                                     {
                                         if (config.CommandAll)
                                         {
-                                            await toyManager.Vibrate(Haptics.Value);
-                                            await toyManager.Pump(Haptics.Value);
-                                            await toyManager.Rotate(Haptics.Value);
+                                            await toyManager.Vibrate(IsBooleanContact ? config.VibrateIntensity : Haptics);
+                                            await toyManager.Pump(IsBooleanContact ? config.PumpIntensity : Haptics);
+                                            await toyManager.Rotate(IsBooleanContact ? config.RotateIntensity : Haptics);
                                         }
                                         else
                                         {
-                                            await toyManager.Vibrate(Haptics.Value);
+                                            await toyManager.Vibrate(Haptics);
                                         }
                                     }
                                     else if (!config.CommandAll && message.Address == config.PumpParameter)
                                     {
-                                        await toyManager.Pump(Haptics.Value);
+                                        await toyManager.Pump(IsBooleanContact ? config.PumpIntensity : Haptics);
                                     }
                                     else if (!config.CommandAll && message.Address == config.RotateParameter)
                                     {
-                                        await toyManager.Rotate(Haptics.Value);
+                                        await toyManager.Rotate(IsBooleanContact ? config.RotateIntensity : Haptics);
                                     }
-                                }
 
-                                // Next call.
-                                nbrMessages++;
+                                    // Message processed, the next N messages will be skipped for performance.
+                                    CountMessages();
+                                }
+                                else
+                                {
+                                    // Message has an invalid value, this counts as a no-concern.
+                                    await CountRetries();
+                                }
                             }
                             else
                             {
-                                // Next call.
-                                nbrMessages++;
-
-                                // Resets the number of calls when limit is reached.
-                                if (nbrMessages > config.Limit)
-                                    nbrMessages = 0;
+                                // Skipping N messages for performance.
+                                CountMessages();
                             }
                         }
                         else
                         {
-                            retries++;
-
-                            // No message received for a moment, pauses vibration if started.
-                            if (retries > config.Limit && Haptics.HasValue && Haptics.Value > 0)
-                            {
-                                Haptics = 0;
-
-                                await toyManager.Vibrate(0);
-                                await toyManager.Pump(0);
-                                await toyManager.Rotate(0);
-#if DEBUG
-                                Console.WriteLine("Vibration stopped.");
-#endif
-                            }
+                            // The received message doesn't concern VRCLovenseConnect.
+                            await CountRetries();
                         }
                     }
                 }
@@ -137,6 +132,37 @@ namespace VrcLovenseConnect.Helpers
 #endif
                 }
             }
+        }
+
+        internal async Task StopToy()
+        {
+            IsBooleanContact = false;
+            Haptics = 0;
+
+            await toyManager.Vibrate(0);
+            await toyManager.Pump(0);
+            await toyManager.Rotate(0);
+#if DEBUG
+            Console.WriteLine("Vibration stopped.");
+#endif
+        }
+
+        private async Task CountRetries()
+        {
+            retries++;
+
+            // No message received for a moment, pauses vibration if started.
+            if (retries > config.Limit && (IsBooleanContact || Haptics > 0))
+                await StopToy();
+        }
+
+        private void CountMessages()
+        {
+            nbrMessages++;
+
+            // Resets the number of messages read when limit is reached.
+            if (nbrMessages > config.Limit)
+                nbrMessages = 0;
         }
     }
 }

@@ -75,21 +75,6 @@ using (toyManager)
     oscModule.Play = false;
     task.Wait();
 
-    // Stops vibration if started.
-    if (oscModule.Haptics.HasValue && oscModule.Haptics.Value > 0)
-    {
-        try
-        {
-            toyManager.Vibrate(0).Wait();
-            toyManager.Pump(0).Wait();
-            toyManager.Rotate(0).Wait();
-        }
-        catch (Exception ex)
-        {
-            // No critical error to cause a full stop.
-#if DEBUG
-            ConsoleHelper.PrintError(ex.Message);
-#endif
-        }
-    }
+    // Stops the toy.
+    oscModule.StopToy().Wait();
 }

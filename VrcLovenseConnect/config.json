@@ -20,9 +20,18 @@
   // The Avatar Parameter to synchronize with for vibration commands.
   "vibrateParameter": "LovenseHaptics",
 
+  // The intensity for vibrations (0.0 to 1.0, boolean Contacts only).
+  "vibrateIntensity": "0.5",
+
   // The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
   "pumpParameter": "LovensePump",
 
+  // The intensity for pumping (0.0 to 1.0, boolean Contacts only).
+  "pumpIntensity": "0.5",
+
   // The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
-  "rotateParameter": "LovenseRotate"
+  "rotateParameter": "LovenseRotate",
+
+  // The intensity for rotations (0.0 to 1.0, boolean Contacts only).
+  "rotateIntensity": "0.5"
 }
