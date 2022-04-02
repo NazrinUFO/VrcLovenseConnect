@@ -78,7 +78,12 @@ For each orifice on which you want toy interactions enabled:
 
 This setup will make sure that you and others can control your toys without any weird behavior. Tags can be changed to be shared only to a few people for a more private use, kind of like a password.
 
-## Documentation
+### What's next?
+
+- Starting from VRChat Open Beta build 1186: having the option to use booleans instead of floats, for an "all or nothing" touch, with an intensity setting in the config file.
+- When Avatar Dynamics goes live: Removing the use of Expression Parameters and replacing "Local-Only" Contacts with normal Contacts to send OSC messages directly, in order to save Expression Parameters memory.
+
+### Documentation
 VRChat OSC: https://docs.vrchat.com/docs/osc-overview
 
 VRChat Contacts: https://docs.vrchat.com/v2022.1.2/docs/contacts
