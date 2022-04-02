@@ -56,6 +56,8 @@ There are two modes of interaction for VRCLovenseConnect, named "Touch" and "Pro
 - In "Proximity" mode, the intensity will be proportionate to the distance between the border of a Contact Sender and the center of a Contact Receiver, within its area of effect.
 
 ### "Touch" Mode
+*02/04/2022*: **WARNING**, the current Open Beta SDK does NOT allow setting up other values than 0 or 1, so the use of a boolean may give unexpected results. It is recommended to use "Proximity" mode instead, although this should be fixed in the near future.
+
 Your avatar requires a spherical Contact Receiver with the Receiver Type set as "Constant" and the Parameter Type set as a boolean.
 
 Set it up to interact with any Contact Sender you want, whether it's a standard (hands, head...) or a custom one (for examples, see "Recommended Contacts Setup" in the DPS section further below).
