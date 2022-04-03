@@ -47,8 +47,8 @@ namespace VrcLovenseConnect.Helpers
                     // Listens for one tick. Non-blocking.
 #if DEBUG
                     messageReceived = true;
-                    //OscPacket packet = new OscMessage(config.VibrateParameter, 0.1f);
-                    OscPacket packet = new OscMessage(config.VibrateParameter, true);
+                    OscPacket packet = new OscMessage(config.VibrateParameter, 0.1f);
+                    //OscPacket packet = new OscMessage(config.VibrateParameter, true);
 #else
                     messageReceived = oscReceiver.TryReceive(out OscPacket packet);
 #endif
@@ -152,7 +152,7 @@ namespace VrcLovenseConnect.Helpers
             retries++;
 
             // No message received for a moment, pauses vibration if started.
-            if (retries > config.Limit && (IsBooleanContact || Haptics > 0))
+            if (retries > config.Limit && !IsBooleanContact && Haptics > 0)
                 await StopToy();
         }
 
