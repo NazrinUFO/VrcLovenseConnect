@@ -56,27 +56,27 @@ Next to the executable should be a config file named "config.json". Open it with
 
 # Avatar Setup
 ## Interaction Types
-There are two modes of interaction for VRCLovenseConnect, named "Touch" and "Proximity".
+There are two modes of interaction for VRCLovenseConnect, named "Proximity" and "Touch".
 
-- In "Touch" mode, just having a Contact Sender touch a Contact Receiver will activate your toy, with an intensity set by the config.json file.
 - In "Proximity" mode, the intensity will be proportionate to the distance between the border of a Contact Sender and the center of a Contact Receiver, within its area of effect.
+- In "Touch" mode, just having a Contact Sender touch a Contact Receiver will activate your toy, with an intensity set by the config.json file.
 
-### "Touch" Mode
-> *02/04/2022*: **WARNING**, the current Open Beta SDK does NOT allow setting up other values than 0 or 1, so the use of a boolean may give unexpected results. It is recommended to use "Proximity" mode instead, although this should be fixed in the near future.
-
-Your avatar requires a spherical Contact Receiver with the Receiver Type set as "Constant" and the Parameter Type set as a boolean.
+### "Proximity" Mode (Recommended)
+Your avatar requires a spherical Contact Receiver with the Receiver Type set as "Proximity".
 
 Set it up to interact with any Contact Sender you want, whether it's a standard (hands, head...) or a custom one (for examples, see "Recommended Contacts Setup" in the DPS section further below).
 
 This Contact Receiver has to be "Local Only" and generate a parameter with the same name as in the config.json file ("LovenseHaptics" by default). Reminder that parameters are case-sensitive.
 
-Finally, add a boolean in your avatar's Expression Parameters with the same name, default to "false" and no saving.
+Finally, add a float in your avatar's Expression Parameters with the same name, default to zero and no saving.
 
-### "Proximity" Mode
-The setup is not very different from "Touch" mode. Just change these settings:
+### "Touch" Mode
+> **WARNING**: In "Touch" mode, disabling the Contact Receiver while it's being touched will *not* stop the toy because no OSC message will be sent to update the toy (even with a Parameter Driver). Make sure that no Contact Sender is touching your Contact Receiver before toggling it off.
 
-- The Contact Receiver must have the Receiver Type set as "Proximity" and the Parameter Type set as a float.
-- Instead of a boolean, add a float in your avatar's Expression Parameters, default to zero and no saving.
+The setup is not very different from "Proximity" mode. Just change these settings:
+
+- The Contact Receiver must have the Receiver Type set as "Constant".
+- Instead of a float, add a boolean in your avatar's Expression Parameters, default to "false" and no saving.
 
 ## Dynamic Penetration System
 ### Contacts Setup
@@ -102,7 +102,7 @@ For each orifice on which you want toy interactions enabled:
 This setup will make sure that you and others can control your toys without any interference. Tags can be changed to be shared only to a few people for a more private use, kind of like a password.
 
 # What's next?
-
+- Multi-toy support, with the option to have separate parameters to control each.
 - When Avatar Dynamics goes live: Removing the use of Expression Parameters and replacing "Local-Only" Contacts with normal Contacts to send OSC messages directly, in order to save Expression Parameters memory.
 
 # Documentation
