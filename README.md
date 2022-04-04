@@ -2,19 +2,21 @@
 VRCLovenseConnect is a .NET implementation of the Lovense Connect API and Buttplug.io to synchronize **any connected toy** with a VRChat avatar through OSC messages.
 
 ## What does it do exactly?
-With the power of **OSC** and **Avatar Dynamics**, your avatar sends values between 0.0 and 1.0 to this program through UDP. This value is converted and transferred to either a Buttplug.io compatible toy through Bluetooth, or to a phone with the Lovense Connect app within the same network through HTTP, which will transfer commands to the Lovense toy.
+With the power of **OSC** and **Avatar Dynamics**, your avatar sends values between 0.0 and 1.0 to this program through UDP. This value is converted and transferred to either a Buttplug.io compatible toy through Bluetooth, or to a phone with the Lovense Connect app within the same network through HTTP, which will transfer commands to each connected toys.
 
-It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so fast indeed that I had to set a limit of processed messages to have less delay lol.
+It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so fast indeed that I had to set a limit of processed messages to have less delay.
 
 ## Requirements
-- Lovense Connect for Android or iOS (also works on PC but requires the Lovense Bluetooth dongle).
+- A bluetooth dongle connected to your PC OR Lovense Connect for Android or iOS (the PC version requires a specific Lovense Bluetooth dongle).
 - At least 8/128 of free memory in your Avatar Expression Parameters, or 1/128 if not using Proximity mode (should not be the case when Avatar Dynamics goes live).
 
 # Toy Setup
 There are currently two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
 
-## Buttplug.io (NEW!)
-Simply connect your toy to your PC through a cable or Bluetooth. Lovense toys should work with basic features in this protocol too.
+When your toys are connected, simply launch the program after VRChat is open.
+
+## Buttplug.io
+Simply connect your toys to your PC through a cable or Bluetooth. Lovense toys should work with basic features in this protocol too.
 
 You can test the connectivity of your toys with Intiface Desktop.
 
@@ -23,34 +25,39 @@ Open the Lovense Connect app on your phone or PC, then select the green shield i
 
 In the config.json file next to the executable, copy this URL to the "address" field.
 
-Then simply launch the program after VRChat is open.
+> *NOTE*: Certain Lovense features such as the contraction for Max 2 are only controllable through Lovense Connect.
 
 ## config.json
 Next to the executable should be a config file named "config.json". Open it with any text editor to change its values.
 
-**oscPort**: The port to listen OSC messages on. Default is 9001.
+There are two parts, common settings and the "toys" settings. 
 
-**protocol**: The protocol to use for toy controls (Lovense or Buttplug).
+### Common settings
+Common settings will affect all toys at once.
+- **oscPort**: The port to listen OSC messages on. Default is 9001.
+- **address**: Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
+- **scanTime**: Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
+- **limit**: Only for debugging. The number of received messages to skip for better performances. Default is 10.
 
-**address**: Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
+### Toys settings
+"Toys" settings will affect one toy at a time.
 
-**scanTime**: Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
+When a toy is detected, its name and protocol will be saved in an empty slot. You can then change its settings in the config.json file.
 
-**limit**: Only for debugging. The number of received messages to skip for better performances. Default is 10.
+> NOTE: Changing the settings won't take effect until the program has been restarted. If a new toy is added, you will have to close the program, change the new toy's settings, then relaunch the program.
 
-**commandAll**: Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
+By default, 5 toys can be managed by VRCLovenseConnect. If you need more toys to be detected, just copy another toy's settings with the curly brackets and leave the name blank. Make sure to enclose each toy settings between curly brackets and separate them with a comma.
 
-**vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands (will control all features if commandAll = true).
+Parameters can share the same value. For example, you can set the same parameter name for all commands and all toys' features will activate at the same time with one Avatar Parameter. Everything is entirely customizable.
 
-**vibrateIntensity**: The intensity for vibrations (0.0 to 1.0, boolean Contacts only).
-
-**pumpParameter**: The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
-
-**pumpIntensity**: The intensity for pumping (0.0 to 1.0, boolean Contacts only).
-
-**rotateParameter**: The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
-
-**rotateIntensity**: The intensity for rotations (0.0 to 1.0, boolean Contacts only).
+- **name**: The name of the toy. Automatically filled on detection.
+- **protocol**: The protocol to use for toy controls (Lovense or Buttplug). No need to set it up if this toy has already been detected.
+- **vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands.
+- **vibrateIntensity**: The intensity for vibrations (0.0 to 1.0, boolean Contacts only).
+- **pumpParameter**: The Avatar Parameter to synchronize with for pumping/linear commands.
+- **pumpIntensity**: The intensity for pumping (0.0 to 1.0, boolean Contacts only).
+- **rotateParameter**: The Avatar Parameter to synchronize with for rotation commands.
+- **rotateIntensity**: The intensity for rotations (0.0 to 1.0, boolean Contacts only).
 
 # Avatar Setup
 ## Interaction Types
@@ -100,7 +107,6 @@ For each orifice on which you want toy interactions enabled:
 This setup will make sure that you and others can control your toys without any interference. Tags can be changed to be shared only to a few people for a more private use, kind of like a password.
 
 # What's next?
-- Multi-toy support, with the option to have separate parameters to control each.
 - When Avatar Dynamics goes live: Removing the use of Expression Parameters and replacing "Local-Only" Contacts with normal Contacts to send OSC messages directly, in order to save Expression Parameters memory.
 
 # Documentation
