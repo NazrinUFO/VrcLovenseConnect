@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,75 +15,36 @@ namespace VrcLovenseConnect.Helpers
         public int OscPort { get; set; }
 
         /// <summary>
-        /// The protocol to use for toy controls.
-        /// </summary>
-        public string Protocol { get; set; }
-
-        /// <summary>
         /// The address provided by Lovense Connect.
         /// </summary>
         public string Address { get; set; }
 
         /// <summary>
-        /// The time to scan for a toy in milliseconds.
+        /// The time to scan for a toy in seconds.
         /// </summary>
         public int ScanTime { get; set; }
+
+        /// <summary>
+        /// The time to scan for a toy in milliseconds.
+        /// </summary>
+        [JsonIgnore]
+        public int RuntimeScanTime => ScanTime * 1000;
 
         /// <summary>
         /// The number of received messages to skip.
         /// </summary>
         public int Limit { get; set; }
 
-        /// <summary>
-        /// Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
-        /// </summary>
-        public bool CommandAll { get; set; }
-
-        /// <summary>
-        /// The Avatar Parameter to synchronize with for vibration commands.
-        /// </summary>
-        public string VibrateParameter { get; set; }
-
-        /// <summary>
-        /// The intensity for vibrations (0.0 to 1.0, boolean only).
-        /// </summary>
-        public float VibrateIntensity { get; set; }
-
-        /// <summary>
-        /// The Avatar Parameter to synchronize with for pumping/linear commands.
-        /// </summary>
-        public string PumpParameter { get; set; }
-
-        /// <summary>
-        /// The intensity for pumping (0.0 to 1.0, boolean Contacts only).
-        /// </summary>
-        public float PumpIntensity { get; set; }
-
-        /// <summary>
-        /// The Avatar Parameter to synchronize with for rotation commands.
-        /// </summary>
-        public string RotateParameter { get; set; }
-
-        /// <summary>
-        /// The intensity for rotations (0.0 to 1.0, boolean Contacts only).
-        /// </summary>
-        public float RotateIntensity { get; set; }
+        public List<ToyConfig> Toys { get; set; }
 
         /// <summary>
         /// The default constructor.
         /// </summary>
         public Config()
         {
-            Protocol = string.Empty;
             Address = string.Empty;
             Limit = 0;
-            CommandAll = false;
-            VibrateParameter = string.Empty;
-            VibrateIntensity = 0;
-            PumpParameter = string.Empty;
-            PumpIntensity = 0;
-            RotateParameter = string.Empty;
-            RotateIntensity = 0;
+            Toys = new List<ToyConfig>();
         }
 
         public bool ControlParameters()
@@ -94,20 +56,6 @@ namespace VrcLovenseConnect.Helpers
                 return false;
             }
 
-            if (Protocol == "Lovense" && string.IsNullOrWhiteSpace(Address))
-            {
-                ConsoleHelper.PrintError("Address error in configuration file. Please enter the address provided by the Lovense Connect app on your phone.");
-                ConsoleHelper.AwaitUserKeyPress();
-                return false;
-            }
-
-            if (Protocol == "Buttplug" && ScanTime <= 0)
-            {
-                ConsoleHelper.PrintError("Scan time error in configuration file. Pleaser enter a non-zero, positive value.");
-                ConsoleHelper.AwaitUserKeyPress();
-                return false;
-            }
-
             if (Limit <= 0)
             {
                 ConsoleHelper.PrintError("Limit error in configuration file. Pleaser enter a non-zero, positive value.");
@@ -115,55 +63,23 @@ namespace VrcLovenseConnect.Helpers
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(VibrateParameter))
+            if (string.IsNullOrWhiteSpace(Address))
             {
-                ConsoleHelper.PrintError("Vibration Avatar Parameter error in configuration file. Please enter a valid name.");
+                ConsoleHelper.PrintError("Address error in configuration file. Please enter the address provided by the Lovense Connect app on your phone or enter any valid address if unused.");
                 ConsoleHelper.AwaitUserKeyPress();
                 return false;
             }
 
-            if (VibrateIntensity <= 0)
+            if (ScanTime <= 0)
             {
-                ConsoleHelper.PrintError("Vibration intensity error in configuration file. Pleaser enter a non-zero, positive value.");
+                ConsoleHelper.PrintError("Scan time error in configuration file. Pleaser enter a non-zero, positive value.");
                 ConsoleHelper.AwaitUserKeyPress();
                 return false;
             }
 
-            if (!CommandAll && string.IsNullOrWhiteSpace(PumpParameter))
-            {
-                ConsoleHelper.PrintError("Pumping Avatar Parameter error in configuration file. Please enter a valid name.");
-                ConsoleHelper.AwaitUserKeyPress();
-                return false;
-            }
-
-            if (!CommandAll && PumpIntensity <= 0)
-            {
-                ConsoleHelper.PrintError("Pumping intensity error in configuration file. Pleaser enter a non-zero, positive value.");
-                ConsoleHelper.AwaitUserKeyPress();
-                return false;
-            }
-
-            if (!CommandAll && string.IsNullOrWhiteSpace(RotateParameter))
-            {
-                ConsoleHelper.PrintError("Rotation Avatar Parameter error in configuration file. Please enter a valid name.");
-                ConsoleHelper.AwaitUserKeyPress();
-                return false;
-            }
-
-            if (!CommandAll && RotateIntensity <= 0)
-            {
-                ConsoleHelper.PrintError("Rotation intensity error in configuration file. Pleaser enter a non-zero, positive value.");
-                ConsoleHelper.AwaitUserKeyPress();
-                return false;
-            }
-
-            // Converts scan time to milliseconds.
-            ScanTime *= 1000;
-
-            // Adds prefix to parameters.
-            VibrateParameter = $"/avatar/parameters/{VibrateParameter}";
-            PumpParameter = $"/avatar/parameters/{PumpParameter}";
-            RotateParameter = $"/avatar/parameters/{RotateParameter}";
+            foreach (var toy in Toys)
+                if (!toy.ControlParameters())
+                    return false;
 
             return true;
         }

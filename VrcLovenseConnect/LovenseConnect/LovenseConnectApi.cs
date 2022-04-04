@@ -34,6 +34,10 @@ namespace LovenseConnect
             public string Id { get; set; } = "";
 
             public string NickName { get; set; } = "";
+
+            public bool VibrateUnsupported { get; set; }
+            public bool LinearUnsupported { get; set; }
+            public bool RotateUnsupported { get; set; }
             #endregion
         }
 
@@ -120,7 +124,7 @@ namespace LovenseConnect
         /// <summary>
         /// The Current Lovense Amount Of All Toy IDs.
         /// </summary>
-        private static Dictionary<string, int> CurrentLovenseAmount = new Dictionary<string, int>();
+        private static Dictionary<(string, string), int> CurrentLovenseAmount = new Dictionary<(string, string), int>();
 
         /// <summary>
         /// Is A Lovense Request In Progress?
@@ -192,7 +196,7 @@ namespace LovenseConnect
                     }
                 }
 
-                return EndCommand("Vibrate", amount, response);
+                return EndCommand(id, "Vibrate", amount, response);
             }
             catch
             {
@@ -221,7 +225,7 @@ namespace LovenseConnect
                 using var rotateContent = rotatePacket.Content;
                 var response = await rotateContent.ReadAsStringAsync();
 
-                return EndCommand("Rotate", amount, response);
+                return EndCommand(id, "Rotate", amount, response);
             }
             catch
             {
@@ -250,7 +254,7 @@ namespace LovenseConnect
                 using var airAutoContent = airAutoPacket.Content;
                 var response = await airAutoContent.ReadAsStringAsync();
 
-                return EndCommand("AirAuto", amount, response);
+                return EndCommand(id, "AirAuto", amount, response);
             }
             catch
             {
@@ -264,7 +268,7 @@ namespace LovenseConnect
         {
             toy = null;
 
-            if (ignoreDuplicateRequests && CurrentLovenseAmount != null && CurrentLovenseAmount.ContainsKey(command) && CurrentLovenseAmount[command] == amount)
+            if (ignoreDuplicateRequests && CurrentLovenseAmount != null && CurrentLovenseAmount.ContainsKey((id, command)) && CurrentLovenseAmount[(id, command)] == amount)
             {
                 return false;
             }
@@ -299,7 +303,7 @@ namespace LovenseConnect
             return true;
         }
 
-        private static bool EndCommand(string command, int amount, string response)
+        private static bool EndCommand(string id, string command, int amount, string response)
         {
             if (DelayWatch.IsRunning)
             {
@@ -314,7 +318,7 @@ namespace LovenseConnect
             {
                 if (CurrentLovenseAmount != null)
                 {
-                    CurrentLovenseAmount[command] = amount;
+                    CurrentLovenseAmount[(id, command)] = amount;
                 }
 
                 IsRequestPending = false;
@@ -326,125 +330,6 @@ namespace LovenseConnect
 
             return false;
         }
-
-        #region No plan to implement this.
-        /// <summary>
-        /// A Simple "Vibrate This Much" Method Which Will Vibrate The Toy {x} Amount; Iterating Through The Amounts List Per The Delay From The Local Lovense Connect Server URL And ID Of The Toy.
-        /// </summary>
-        /// <param name="url">The Local Lovense Connect Server URL.</param>
-        /// <param name="id">The Toy ID - Fun Fact: This Is The Device's MAC Address.</param>
-        /// <param name="amounts">The Vibration Intensitys.</param>
-        /// <param name="DelayBetweenAmountsMilliseconds">The Delay Between Lovenses Defined In The Amounts.</param>
-        /// <returns></returns>
-        public static async Task<bool> VibrateToyWithPattern(string url, string id, List<int> amounts, float DelayBetweenAmountsMilliseconds = 200)
-        {
-            try
-            {
-                if (IsRequestPending)
-                {
-                    return false;
-                }
-
-                if (Toys == null || Toys.Count == 0)
-                {
-                    return false;
-                }
-
-                IsRequestPending = true;
-
-                var toy = Toys.Find(o => o.Id == id);
-
-                foreach (int amount in amounts)
-                {
-                    DelayWatch.Reset();
-
-                    using var packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.Id ?? string.Empty);
-                    using var content = packet.Content;
-                    var response = await content.ReadAsStringAsync();
-
-                    if (!string.IsNullOrEmpty(response) && !response.ToLower().Contains("\"ok\""))
-                    {
-                        IsRequestPending = false;
-
-                        return false;
-                    }
-
-                    if (toy?.Name.ToLower().Contains("edge") ?? false)
-                    {
-                        await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate1?v=" + amount + "&t=" + toy.Id);
-
-                        using var vibrate2Packet = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate2?v=" + amount + "&t=" + toy.Id);
-                        using var vibrate2Content = vibrate2Packet.Content;
-                        response = await vibrate2Content.ReadAsStringAsync();
-
-                        if (!string.IsNullOrEmpty(response) && !response.ToLower().Contains("\"ok\""))
-                        {
-                            IsRequestPending = false;
-
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        using var vibratePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Vibrate?v=" + amount + "&t=" + toy?.Id);
-                        using var vibrateContent = vibratePacket.Content;
-                        response = await vibrateContent.ReadAsStringAsync();
-
-                        if (!string.IsNullOrEmpty(response) && !response.ToLower().Contains("\"ok\""))
-                        {
-                            IsRequestPending = false;
-
-                            return false;
-                        }
-                    }
-
-                    if (toy?.Name.ToLower().Contains("max") ?? false)
-                    {
-                        using var airAutoPacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/AirAuto?v=" + RangeConv(amount, 0, 20, 0, 3) + "&t=" + toy.Id);
-                        using var airAutoContent = airAutoPacket.Content;
-                        response = await airAutoContent.ReadAsStringAsync();
-                    }
-                    else if (toy?.Name.ToLower().Contains("nora") ?? false)
-                    {
-                        using var rotatePacket = await Client.GetAsync(url.ToLower().Replace("/gettoys", "") + "/Rotate?v=" + amount + "&t=" + toy.Id);
-                        using var rotateContent = rotatePacket.Content;
-                        response = await rotateContent.ReadAsStringAsync();
-                    }
-
-                    if (DelayWatch.IsRunning)
-                    {
-                        DelayWatch.Stop();
-
-                        LastKnownLatency = (int)DelayWatch.Elapsed.TotalMilliseconds;
-                    }
-
-                    if (!string.IsNullOrEmpty(response) && !response.ToLower().Contains("\"ok\""))
-                    {
-                        IsRequestPending = false;
-
-                        return false;
-                    }
-
-                    CurrentLovenseAmount[id] = amount;
-
-                    if (amounts.Count > 1)
-                    {
-                        await Task.Delay(TimeSpan.FromMilliseconds(DelayBetweenAmountsMilliseconds));
-                    }
-                }
-
-                IsRequestPending = false;
-
-                return true;
-            }
-            catch
-            {
-                IsRequestPending = false;
-
-                return false;
-            }
-        }
-        #endregion
 
         public static int RangeConv(float input, float MinPossibleInput, float MaxPossibleInput, float MinConv, float MaxConv)
         {

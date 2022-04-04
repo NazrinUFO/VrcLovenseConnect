@@ -1,37 +1,58 @@
 {
-  // The port to listen OSC messages on. Default is 9001.
   "oscPort": 9001,
-
-  // The protocol to use for toy controls (Lovense or Buttplug).
-  "protocol": "Buttplug",
-
-  // Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
   "address": "https://192-168-1-57.lovense.club:30010/GetToys",
-
-  // Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
   "scanTime": 5,
-
-  // Only for debugging. The number of received messages to skip for better performances. Default is 10.
   "limit": 10,
-
-  // Allows all commands to be activated just by the Avatar Parameter for vibration, or with separate parameters.
-  "commandAll": true,
-
-  // The Avatar Parameter to synchronize with for vibration commands.
-  "vibrateParameter": "LovenseHaptics",
-
-  // The intensity for vibrations (0.0 to 1.0, boolean Contacts only).
-  "vibrateIntensity": "0.5",
-
-  // The Avatar Parameter to synchronize with for pumping/linear commands (unused if commandAll = false).
-  "pumpParameter": "LovensePump",
-
-  // The intensity for pumping (0.0 to 1.0, boolean Contacts only).
-  "pumpIntensity": "0.5",
-
-  // The Avatar Parameter to synchronize with for rotation commands (unused if commandAll = false).
-  "rotateParameter": "LovenseRotate",
-
-  // The intensity for rotations (0.0 to 1.0, boolean Contacts only).
-  "rotateIntensity": "0.5"
+  "toys": [
+    {
+        "name": "",
+        "protocol": "",
+        "vibrateParameter": "LovenseHaptics",
+        "vibrateIntensity": "0.5",
+        "pumpParameter": "LovenseHaptics",
+        "pumpIntensity": "0.5",
+        "rotateParameter": "LovenseHaptics",
+        "rotateIntensity": "0.5"
+    },
+    {
+        "name": "",
+        "protocol": "",
+        "vibrateParameter": "LovenseHaptics",
+        "vibrateIntensity": "0.5",
+        "pumpParameter": "LovenseHaptics",
+        "pumpIntensity": "0.5",
+        "rotateParameter": "LovenseHaptics",
+        "rotateIntensity": "0.5"
+    },
+    {
+        "name": "",
+        "protocol": "",
+        "vibrateParameter": "LovenseHaptics",
+        "vibrateIntensity": "0.5",
+        "pumpParameter": "LovenseHaptics",
+        "pumpIntensity": "0.5",
+        "rotateParameter": "LovenseHaptics",
+        "rotateIntensity": "0.5"
+    },
+    {
+        "name": "",
+        "protocol": "",
+        "vibrateParameter": "LovenseHaptics",
+        "vibrateIntensity": "0.5",
+        "pumpParameter": "LovenseHaptics",
+        "pumpIntensity": "0.5",
+        "rotateParameter": "LovenseHaptics",
+        "rotateIntensity": "0.5"
+    },
+    {
+        "name": "",
+        "protocol": "",
+        "vibrateParameter": "LovenseHaptics",
+        "vibrateIntensity": "0.5",
+        "pumpParameter": "LovenseHaptics",
+        "pumpIntensity": "0.5",
+        "rotateParameter": "LovenseHaptics",
+        "rotateIntensity": "0.5"
+    }
+  ]
 }

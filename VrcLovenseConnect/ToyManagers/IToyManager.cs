@@ -2,16 +2,16 @@
 {
     internal interface IToyManager : IDisposable
     {
-        string ToyName { get; }
+        IEnumerable<string> ToyNames { get; }
 
         bool IsToyFound { get; }
 
         Task FindToy();
 
-        Task Vibrate(float haptics);
+        Task Vibrate(string toyName, float haptics);
 
-        Task Rotate(float haptics);
+        Task Rotate(string toyName, float haptics);
 
-        Task Pump(float haptics);
+        Task Pump(string toyName, float haptics);
     }
 }
