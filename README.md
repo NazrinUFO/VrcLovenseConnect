@@ -38,9 +38,9 @@ Common settings will affect all toys at once.
 - **oscPort**: The port to listen OSC messages on. Default is 9001.
 - **address**: Only for Lovense protocol. The address provided by the Lovense Connect app on your phone (not Lovense Remote).
 - **scanTime**: Only for Buttplug protocol. The time to scan for a toy in seconds. Default is 5.
-- **limit**: The number of received messages to skip for better performances. Default is 10.
+- **limit**: The limit of received messages to process. Raise the value if you experience some serious delay (refresh rate will be affected). Default is 10.
 
-> NOTE: You may experience more delays the more toys you have. In that case, increase the "limit" value in the settings.
+> NOTE: You may experience more response delay the more toys you have connected. In that case, raise the "limit" parameter to trade responsiveness with refresh rate.
 
 ### Toys settings
 "Toys" settings will affect one toy at a time.
