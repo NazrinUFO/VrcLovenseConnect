@@ -8,7 +8,7 @@ It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so f
 
 ## Requirements
 - A bluetooth dongle connected to your PC OR Lovense Connect for Android or iOS (the PC version requires a specific Lovense Bluetooth dongle).
-~~- At least 8/128 of free memory in your Avatar Expression Parameters, or 1/128 if not using Proximity mode.~~ Not a requirement since build 1188.
+- ~~At least 8/128 of free memory in your Avatar Expression Parameters, or 1/128 if not using Proximity mode.~~ Not a requirement since build 1188.
 
 # Toy Setup
 There are currently two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
@@ -84,7 +84,7 @@ This Contact Receiver has to be "Local Only" and generate a parameter with the s
 The setup is not very different from "Proximity" mode. Just change these settings:
 
 - The Contact Receiver must have the Receiver Type set as "Constant".
-~~- Instead of a float, add a boolean in your avatar's Expression Parameters, default to "false" and no saving.~~ Not required since build 1188.
+- ~~Instead of a float, add a boolean in your avatar's Expression Parameters, default to "false" and no saving.~~ Not required since build 1188.
 
 ## Dynamic Penetration System
 ### Contacts Setup
