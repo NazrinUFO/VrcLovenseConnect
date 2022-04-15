@@ -9,7 +9,6 @@ namespace VrcLovenseConnect.Helpers
         readonly Config config;
         readonly IToyManager lovenseManager;
         readonly IToyManager buttplugManager;
-        IToyManager toyManager;
         readonly Dictionary<string, double> retries;
         int nbrMessages;
 
@@ -24,7 +23,6 @@ namespace VrcLovenseConnect.Helpers
             this.config = config;
             this.lovenseManager = lovenseManager;
             this.buttplugManager = buttplugManager;
-            toyManager = buttplugManager;
             retries = new Dictionary<string, double>();
         }
 
@@ -50,7 +48,6 @@ namespace VrcLovenseConnect.Helpers
 #if DEBUG
                     messageReceived = true;
                     OscPacket packet = new OscMessage("/avatar/parameters/LovenseHaptics", 0.1f);
-                    //OscPacket packet = new OscMessage("/avatar/parameters/LovenseHaptics", true);
 #else
                     messageReceived = oscReceiver.TryReceive(out OscPacket packet);
 #endif
@@ -121,7 +118,7 @@ namespace VrcLovenseConnect.Helpers
 
         internal async Task StopToy(ToyConfig toy)
         {
-            toyManager = toy.Protocol == "Lovense" ? lovenseManager : buttplugManager;
+            var toyManager = toy.Protocol == "Lovense" ? lovenseManager : buttplugManager;
 
             IsBooleanContact = false;
             Haptics = 0;
@@ -156,7 +153,7 @@ namespace VrcLovenseConnect.Helpers
 
         private async Task CommandToy(ToyConfig toy, OscMessage message)
         {
-            toyManager = toy.Protocol == "Lovense" ? lovenseManager : buttplugManager;
+            var toyManager = toy.Protocol == "Lovense" ? lovenseManager : buttplugManager;
 
             if (message.Address == toy.VibrateAddress)
             {

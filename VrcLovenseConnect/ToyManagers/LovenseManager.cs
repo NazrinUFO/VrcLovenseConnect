@@ -34,8 +34,15 @@ namespace VrcLovenseConnect.ToyManagers
 
         public async Task FindToy()
         {
-            // Finds connected toys.
-            toys = await GetToys(address) ?? new List<LovenseToy>();
+            try
+            {
+                // Finds connected toys.
+                toys = await GetToys(address) ?? new List<LovenseToy>();
+            }
+            catch
+            {
+                toys = new List<LovenseToy>();
+            }
         }
 
         public async Task Vibrate(string toyName, float haptics)
