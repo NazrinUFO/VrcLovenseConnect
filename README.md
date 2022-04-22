@@ -76,7 +76,8 @@ Set it up to interact with any Contact Sender you want, whether it's a standard 
 
 This Contact Receiver has to be "Local Only" and generate a parameter with the same name as in the config.json file ("LovenseHaptics" by default). Reminder that parameters are case-sensitive.
 
-~~Finally, add a float in your avatar's Expression Parameters with the same name, default to zero and no saving.~~ Not required since build 1188.
+> Note: Having the parameter as "Local Only" makes it so that the parameter will not be synced online.
+> VRCLovenseConnect doesn't require online syncing to function, but if you want to repurpose this parameter for an animation, set "Local Only" off.
 
 ### "Touch" Mode
 > **WARNING**: In "Touch" mode, disabling the Contact Receiver while it's being touched will *not* stop the toy because no OSC message will be sent to update the toy (even with a Parameter Driver). Make sure that no Contact Sender is touching your Contact Receiver before toggling it off.
@@ -84,7 +85,7 @@ This Contact Receiver has to be "Local Only" and generate a parameter with the s
 The setup is not very different from "Proximity" mode. Just change these settings:
 
 - The Contact Receiver must have the Receiver Type set as "Constant".
-- ~~Instead of a float, add a boolean in your avatar's Expression Parameters, default to "false" and no saving.~~ Not required since build 1188.
+- Instead of a float, the value of the Contact will be a boolean. Take note of this if you want to repurpose this parameter in your animation controllers.
 
 ## Dynamic Penetration System
 ### Contacts Setup
