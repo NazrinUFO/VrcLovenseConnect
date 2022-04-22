@@ -100,7 +100,7 @@ For a penetrator:
 - (Optional) one Contact Receiver with an "OrificeSelf" custom tag, and "Allow Self" enabled only.
 - (Optional) one Contact Sender with a "PenetratorSelf" tag.
 
-For each orifice on which you want toy interactions enabled _except for standard Contacts like Hands_:
+For each orifice on which you want toy interactions enabled **except for standard Contacts like Hands**:
 - one Contact Receiver with at least the "Fingers" standard tag, and "Allow Self" and "Allow Others" enabled.
 - one Contact Receiver with a "Penetrator" custom tag, and "Allow Others" enabled only.
 - one Contact Sender with an "Orifice" tag (can have a different shape than the Receiver).
