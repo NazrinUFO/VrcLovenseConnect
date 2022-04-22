@@ -76,7 +76,7 @@ Set it up to interact with any Contact Sender you want, whether it's a standard 
 
 This Contact Receiver has to be "Local Only" and generate a parameter with the same name as in the config.json file ("LovenseHaptics" by default). Reminder that parameters are case-sensitive.
 
-> Note: Setting the Contact as "Local Only" makes it so that the parameter will not be synced online and saves bandwidth.
+> *NOTE*: Setting the Contact as "Local Only" makes it so that the parameter will not be synced online and saves bandwidth.
 > VRCLovenseConnect doesn't require online syncing to function, but if you want to repurpose this specific Contact for an animation, set "Local Only" off.
 > Not all Contacts using the same parameter need to be "Local Only" either, only change the ones that will play an animation.
 
