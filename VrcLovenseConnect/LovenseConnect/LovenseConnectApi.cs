@@ -96,7 +96,7 @@ namespace LovenseConnect
             {
                 LovenseToy? toy = JsonConvert.DeserializeObject<LovenseToy>(toyid.Value.ToString());
                 
-                if (toy != null)
+                if (toy?.Status == true)
                     toys.Add(toy);
             }
 
