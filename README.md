@@ -8,7 +8,7 @@ It has been tested to be **accurate**, **lightweight** and **fast**. OSC is so f
 
 ## Requirements
 - A bluetooth dongle connected to your PC OR Lovense Connect for Android or iOS (the PC version requires a specific Lovense Bluetooth dongle).
-- At least 8/128 of free memory in your Avatar Expression Parameters, or 1/128 if not using Proximity mode (should not be the case when Avatar Dynamics goes live).
+- ~~At least 8/128 of free memory in your Avatar Expression Parameters, or 1/128 if not using Proximity mode.~~ Not a requirement since build 1188.
 
 # Toy Setup
 There are currently two protocols available for VRCLovenseConnect: "Lovense" and "Buttplug".
@@ -76,7 +76,9 @@ Set it up to interact with any Contact Sender you want, whether it's a standard 
 
 This Contact Receiver has to be "Local Only" and generate a parameter with the same name as in the config.json file ("LovenseHaptics" by default). Reminder that parameters are case-sensitive.
 
-Finally, add a float in your avatar's Expression Parameters with the same name, default to zero and no saving.
+> *NOTE*: Setting the Contact as "Local Only" makes it so that the parameter will not be synced online and saves bandwidth.
+> VRCLovenseConnect doesn't require online syncing to function, but if you want to repurpose this specific Contact for an animation, set "Local Only" off.
+> Not all Contacts using the same parameter need to be "Local Only" either, only change the ones that will play an animation.
 
 ### "Touch" Mode
 > **WARNING**: In "Touch" mode, disabling the Contact Receiver while it's being touched will *not* stop the toy because no OSC message will be sent to update the toy (even with a Parameter Driver). Make sure that no Contact Sender is touching your Contact Receiver before toggling it off.
@@ -84,7 +86,7 @@ Finally, add a float in your avatar's Expression Parameters with the same name, 
 The setup is not very different from "Proximity" mode. Just change these settings:
 
 - The Contact Receiver must have the Receiver Type set as "Constant".
-- Instead of a float, add a boolean in your avatar's Expression Parameters, default to "false" and no saving.
+- Instead of a float, the value of the Contact will be a boolean. Take note of this if you want to repurpose this parameter in your animation controllers.
 
 ## Dynamic Penetration System
 ### Contacts Setup
@@ -110,7 +112,7 @@ For each orifice on which you want toy interactions enabled:
 This setup will make sure that you and others can control your toys without any interference. Tags can be changed to be shared only to a few people for a more private use, kind of like a password.
 
 # What's next?
-- When Avatar Dynamics goes live: Removing the use of Expression Parameters and replacing "Local-Only" Contacts with normal Contacts to send OSC messages directly, in order to save Expression Parameters memory.
+More improvements on responsiveness.
 
 # Documentation
 VRChat OSC: https://docs.vrchat.com/docs/osc-overview
