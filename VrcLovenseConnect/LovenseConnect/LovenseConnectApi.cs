@@ -29,7 +29,7 @@ namespace LovenseConnect
             public string Name { get; set; } = "Unknown";
 
             public string Battery { get; set; } = "0%";
-            public bool Status { get; set; } = false;
+            public int Status { get; set; } = 0;
 
             public string Id { get; set; } = "";
 
@@ -96,7 +96,7 @@ namespace LovenseConnect
             {
                 LovenseToy? toy = JsonConvert.DeserializeObject<LovenseToy>(toyid.Value.ToString());
                 
-                if (toy?.Status == true)
+                if (toy != null && toy.Status != 0)
                     toys.Add(toy);
             }
 

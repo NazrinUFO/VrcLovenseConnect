@@ -7,7 +7,10 @@ OscModule oscModule;
 Task task;
 
 ConsoleHelper.DefaultColor = Console.ForegroundColor;
-ConsoleHelper.PrintInfo("VRCLovenseConnect (alpha)");
+ConsoleHelper.PrintInfo("VRCLovenseConnect (beta)");
+
+// Initiates logging
+Logger.OpenLog("log.txt");
 
 // Checks the configuration of the program
 string configFile = File.ReadAllText("config.json");
@@ -41,8 +44,9 @@ if (lovenseManager.IsToyFound || buttplugManager.IsToyFound)
         SaveToys(buttplugManager, "Buttplug");
         File.WriteAllText("config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
     }
-    catch
+    catch (Exception ex)
     {
+        Logger.LogException(ex);
         return;
     }
 
@@ -71,6 +75,9 @@ task.Wait();
 // Stops all toys.
 foreach (var toy in config.Toys)
     oscModule.StopToy(toy).Wait();
+
+// Ends logging
+Logger.CloseLog();
 
 void SaveToys(IToyManager toyManager, string protocol)
 {

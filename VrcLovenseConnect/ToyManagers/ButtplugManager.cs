@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VrcLovenseConnect.Helpers;
 
 namespace VrcLovenseConnect.ToyManagers
 {
@@ -72,8 +73,10 @@ namespace VrcLovenseConnect.ToyManagers
                 {
                     await toy.Toy.SendVibrateCmd(haptics);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.LogException(ex);
+
                     // If any error happens, disables the feature for safety.
                     toy.VibrateUnsupported = true;
                 }
@@ -93,8 +96,10 @@ namespace VrcLovenseConnect.ToyManagers
                 {
                     await toy.Toy.SendRotateCmd(haptics, true);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.LogException(ex);
+
                     // If any error happens, disables the feature for safety.
                     toy.RotateUnsupported = true;
                 }
@@ -114,8 +119,10 @@ namespace VrcLovenseConnect.ToyManagers
                 {
                     await toy.Toy.SendLinearCmd(moveSpeed, haptics);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.LogException(ex);
+
                     // If any error happens, disables the feature for safety.
                     toy.LinearUnsupported = true;
                 }

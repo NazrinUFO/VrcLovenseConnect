@@ -1,4 +1,5 @@
-﻿using static LovenseConnect.LovenseConnectApi;
+﻿using VrcLovenseConnect.Helpers;
+using static LovenseConnect.LovenseConnectApi;
 
 namespace VrcLovenseConnect.ToyManagers
 {
@@ -39,8 +40,10 @@ namespace VrcLovenseConnect.ToyManagers
                 // Finds connected toys.
                 toys = await GetToys(address) ?? new List<LovenseToy>();
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.LogException(ex);
+
                 toys = new List<LovenseToy>();
             }
         }
@@ -60,8 +63,10 @@ namespace VrcLovenseConnect.ToyManagers
                 {
                     await VibrateToy(address, toy.Id ?? string.Empty, intensity, true);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.LogException(ex);
+
                     // If any error happens, disables the feature for safety.
                     toy.VibrateUnsupported = true;
                 }
@@ -83,8 +88,10 @@ namespace VrcLovenseConnect.ToyManagers
                 {
                     await RotateToy(address, toy?.Id ?? string.Empty, intensity, true);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.LogException(ex);
+
                     // If any error happens, disables the feature for safety.
                     toy.RotateUnsupported = true;
                 }
@@ -106,8 +113,11 @@ namespace VrcLovenseConnect.ToyManagers
                 {
                     await PumpToy(address, toy?.Id ?? string.Empty, intensity, true);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.LogException(ex);
+
+                    // If any error happens, disables the feature for safety.
                     toy.LinearUnsupported = true;
                 }
             }
