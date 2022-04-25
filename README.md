@@ -56,18 +56,18 @@ Parameters can share the same value. For example, you can set the same parameter
 - **name**: The name of the toy. Automatically filled on detection.
 - **protocol**: The protocol to use for toy controls (Lovense or Buttplug). No need to set it up if this toy has already been detected.
 - **vibrateParameter**: The Avatar Parameter to synchronize with for vibration commands.
-- **vibrateIntensity**: The intensity for vibrations (0.0 to 1.0, boolean Contacts only).
+- **vibrateIntensity**: The intensity for vibrations (0.0 to 1.0, "Constant" Contacts only).
 - **pumpParameter**: The Avatar Parameter to synchronize with for pumping/linear commands.
-- **pumpIntensity**: The intensity for pumping (0.0 to 1.0, boolean Contacts only).
+- **pumpIntensity**: The intensity for pumping (0.0 to 1.0, "Constant" Contacts only).
 - **rotateParameter**: The Avatar Parameter to synchronize with for rotation commands.
-- **rotateIntensity**: The intensity for rotations (0.0 to 1.0, boolean Contacts only).
+- **rotateIntensity**: The intensity for rotations (0.0 to 1.0, "Constant" Contacts only).
 
 # Avatar Setup
 ## Interaction Types
-There are two modes of interaction for VRCLovenseConnect, named "Proximity" and "Touch".
+There are two modes of interaction for VRCLovenseConnect, named "Proximity" and "Constant".
 
 - In "Proximity" mode, the intensity will be proportionate to the distance between the border of a Contact Sender and the center of a Contact Receiver, within its area of effect.
-- In "Touch" mode, just having a Contact Sender touch a Contact Receiver will activate your toy, with an intensity set by the config.json file.
+- In "Constant" mode, just having a Contact Sender touch a Contact Receiver will activate your toy, with an intensity set by the config.json file.
 
 ### "Proximity" Mode (Recommended)
 Your avatar requires a spherical Contact Receiver with the Receiver Type set as "Proximity".
@@ -80,8 +80,8 @@ This Contact Receiver has to be "Local Only" and generate a parameter with the s
 > VRCLovenseConnect doesn't require online syncing to function, but if you want to repurpose this specific Contact for an animation, set "Local Only" off.
 > Not all Contacts using the same parameter need to be "Local Only" either, only change the ones that will play an animation.
 
-### "Touch" Mode
-> **WARNING**: In "Touch" mode, disabling the Contact Receiver while it's being touched will *not* stop the toy because no OSC message will be sent to update the toy (even with a Parameter Driver). Make sure that no Contact Sender is touching your Contact Receiver before toggling it off.
+### "Constant" Mode
+> **WARNING**: In "Constant" mode, disabling the Contact Receiver while it's being touched will *not* stop the toy because no OSC message will be sent to update the toy (even with a Parameter Driver). Make sure that no Contact Sender is touching your Contact Receiver before toggling it off.
 
 The setup is not very different from "Proximity" mode. Just change these settings:
 
